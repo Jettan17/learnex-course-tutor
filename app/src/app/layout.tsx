@@ -21,7 +21,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NTU Course Tutor",
+  title: "LearnEx",
   description: "Adaptive learning platform for NTU Semester 2 courses",
 };
 
@@ -41,7 +41,7 @@ export default function RootLayout({
               <div className="flex items-center">
                 <Link href="/" className="flex items-center gap-3 group">
                   <span className="font-heading text-2xl font-bold tracking-tight text-neutral-900 dark:text-white uppercase">
-                    NTU <span className="text-neutral-400">Course Tutor</span>
+                    Learn<span className="text-neutral-400">Ex</span>
                   </span>
                 </Link>
                 <div className="hidden sm:ml-16 sm:flex sm:space-x-2">
@@ -106,7 +106,7 @@ export default function RootLayout({
           <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-6">
               <span className="font-heading text-sm font-medium tracking-widest text-neutral-400 uppercase">
-                NTU Course Tutor
+                LearnEx
               </span>
               <p className="text-sm text-neutral-400 tracking-wide">
                 Powered by FSRS spaced repetition
