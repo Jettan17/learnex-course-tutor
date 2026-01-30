@@ -17,6 +17,7 @@ export interface Topic {
   summary: string;
   keyPoints: string[];
   codeExamples?: CodeExample[];
+  resources?: Resource[];
 }
 
 export interface CodeExample {
@@ -24,6 +25,13 @@ export interface CodeExample {
   language: string;
   code: string;
   explanation: string;
+}
+
+export interface Resource {
+  title: string;
+  url: string;
+  type: 'documentation' | 'tutorial' | 'reference' | 'practice';
+  source: string;
 }
 
 export type QuestionType =

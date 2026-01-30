@@ -53,6 +53,26 @@ SUB R3, R1, R0   ; R3 = R1 - R0 = 10
 ; N=0 (positive), Z=0 (not zero), C=0, V=0`,
             explanation: 'Basic MOV and arithmetic operations. MOV copies a value into a register. ADD and SUB perform arithmetic and can set CPSR flags.'
           }
+        ],
+        resources: [
+          {
+            title: 'Writing ARM Assembly (Part 1)',
+            url: 'https://azeria-labs.com/writing-arm-assembly-part-1/',
+            type: 'tutorial',
+            source: 'Azeria Labs'
+          },
+          {
+            title: 'ARM Assembly By Example',
+            url: 'https://armasm.com/',
+            type: 'tutorial',
+            source: 'armasm.com'
+          },
+          {
+            title: 'Introduction to ARM Assembly',
+            url: 'https://cburch.com/books/arm/',
+            type: 'documentation',
+            source: 'cburch.com'
+          }
         ]
       },
       {
@@ -121,6 +141,20 @@ LDR R0, [R1, #4]!   ; R1 = 0x1004, then load from 0x1004
 ; Post-index mode - R1 updated after
 LDR R0, [R1], #4    ; Load from 0x1000, then R1 = 0x1004`,
             explanation: 'Pre-indexing updates the base register before the memory access; post-indexing updates it after. This is useful for traversing arrays.'
+          }
+        ],
+        resources: [
+          {
+            title: 'ARM Addressing Modes',
+            url: 'https://azeria-labs.com/arm-data-types-and-registers-part-2/',
+            type: 'tutorial',
+            source: 'Azeria Labs'
+          },
+          {
+            title: 'ARM Instruction Set Reference',
+            url: 'https://iitd-plos.github.io/col718/ref/arm-instructionset.pdf',
+            type: 'reference',
+            source: 'IIT Delhi'
           }
         ]
       },
@@ -210,6 +244,20 @@ loop:
     ; R0 now contains sum of 5 array elements`,
             explanation: 'SUBS decrements and sets the Z flag when result is zero. BNE (Branch if Not Equal) continues looping while Z=0.'
           }
+        ],
+        resources: [
+          {
+            title: 'ARM Instruction Set Tutorial',
+            url: 'https://armasm.com/',
+            type: 'tutorial',
+            source: 'ARM Assembly By Example'
+          },
+          {
+            title: 'ARM Conditional Execution',
+            url: 'https://azeria-labs.com/arm-conditional-execution-and-branching-part-6/',
+            type: 'tutorial',
+            source: 'Azeria Labs'
+          }
         ]
       },
       {
@@ -275,6 +323,20 @@ Offset = 0x38 (56) - byte position in cache line
 Index  = 0x59 (89) - which cache line
 Tag    = 0x48D1    - verify correct block`,
             explanation: 'The offset selects a byte within the cache line. The index selects which cache line. The tag verifies we have the correct memory block.'
+          }
+        ],
+        resources: [
+          {
+            title: 'Cache Memory Tutorial',
+            url: 'https://www.geeksforgeeks.org/cache-memory-in-computer-organization/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'Cache Mapping Techniques',
+            url: 'https://www.geeksforgeeks.org/cache-memory-in-computer-organization/',
+            type: 'reference',
+            source: 'GeeksforGeeks'
           }
         ]
       },
@@ -350,6 +412,26 @@ Translation:
 4. Combine PFN with Page Offset
    Physical Address = [PFN | 0x678]`,
             explanation: 'The page offset remains unchanged during translation. Only the VPN is translated to PFN using the page table (or TLB for speed).'
+          }
+        ],
+        resources: [
+          {
+            title: 'Virtual Memory Tutorial',
+            url: 'https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory-i/index.html',
+            type: 'tutorial',
+            source: 'UMD CS'
+          },
+          {
+            title: 'Paging in Operating System',
+            url: 'https://www.geeksforgeeks.org/operating-systems/paging-in-operating-system/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'Virtual Memory',
+            url: 'https://www.tutorialspoint.com/operating_system/os_virtual_memory.htm',
+            type: 'documentation',
+            source: 'TutorialsPoint'
           }
         ]
       },
@@ -429,6 +511,20 @@ INTERRUPT:
         ; Process data
         POP {R0-R3, PC}              ; Return from interrupt`,
             explanation: 'Polling wastes CPU cycles checking status. Interrupts allow CPU to work on other tasks until device signals readiness.'
+          }
+        ],
+        resources: [
+          {
+            title: 'I/O Systems Tutorial',
+            url: 'https://www.geeksforgeeks.org/input-output-systems/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'DMA and Interrupts',
+            url: 'https://www.tutorialspoint.com/operating_system/os_io_hardware.htm',
+            type: 'documentation',
+            source: 'TutorialsPoint'
           }
         ]
       },
@@ -511,6 +607,20 @@ Example: Reading 4KB from HDD
   Seek: 8ms + Rotation: 4ms + Transfer: 0.1ms ≈ 12ms
   Same from SSD: ~0.1ms (100x faster!)`,
             explanation: 'The memory hierarchy shows dramatic differences in access times. SSDs are orders of magnitude faster than HDDs for random access.'
+          }
+        ],
+        resources: [
+          {
+            title: 'Memory Hierarchy',
+            url: 'https://www.geeksforgeeks.org/memory-hierarchy-design-and-its-characteristics/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'Types of Computer Memory',
+            url: 'https://www.tutorialspoint.com/computer_fundamentals/computer_memory.htm',
+            type: 'documentation',
+            source: 'TutorialsPoint'
           }
         ]
       },
@@ -599,6 +709,20 @@ Verification:
 = -6.5 ✓`,
             explanation: 'IEEE 754 represents floating-point numbers with separate sign, exponent (biased), and mantissa fields.'
           }
+        ],
+        resources: [
+          {
+            title: 'Number System in Computer',
+            url: 'https://www.geeksforgeeks.org/number-system-in-computer-architecture/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'IEEE 754 Floating Point',
+            url: 'https://www.geeksforgeeks.org/ieee-standard-754-floating-point-numbers/',
+            type: 'reference',
+            source: 'GeeksforGeeks'
+          }
         ]
       },
       {
@@ -684,6 +808,20 @@ MUL:              IF  ID  EX  MEM WB
 LDR:                  IF  ID  EX  MEM WB`,
             explanation: 'Data hazards occur when instructions depend on previous results. Forwarding allows the ALU result to be used immediately without waiting for writeback.'
           }
+        ],
+        resources: [
+          {
+            title: 'CPU Pipelining',
+            url: 'https://www.geeksforgeeks.org/computer-organization-and-architecture-pipelining-set-1-execution-stages-and-throughput/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'Pipeline Hazards',
+            url: 'https://www.geeksforgeeks.org/computer-organization-and-architecture-pipelining-set-2-dependencies-and-data-hazard/',
+            type: 'reference',
+            source: 'GeeksforGeeks'
+          }
         ]
       }
     ]
@@ -746,6 +884,20 @@ print(sys.getrefcount(x))  # Count increased
 del y  # Decreases reference count
 print(sys.getrefcount(x))  # Back to original`,
             explanation: 'sys.getrefcount() shows how many references point to an object. Note: it includes the temporary reference from the function call itself.'
+          }
+        ],
+        resources: [
+          {
+            title: 'Python Memory Management',
+            url: 'https://www.geeksforgeeks.org/memory-management-in-python/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'Understanding Python Memory',
+            url: 'https://realpython.com/python-memory-management/',
+            type: 'tutorial',
+            source: 'Real Python'
           }
         ]
       },
@@ -828,6 +980,26 @@ class DoublyLinkedList:
             self.tail.next = new_node
             self.tail = new_node`,
             explanation: 'Doubly linked list allows O(1) insertion at both ends when tail pointer is maintained.'
+          }
+        ],
+        resources: [
+          {
+            title: 'Linked List Data Structure',
+            url: 'https://www.geeksforgeeks.org/dsa/linked-list-data-structure/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'Python Linked Lists',
+            url: 'https://realpython.com/linked-lists-python/',
+            type: 'tutorial',
+            source: 'Real Python'
+          },
+          {
+            title: 'Linked List Tutorial',
+            url: 'https://www.w3schools.com/dsa/dsa_data_linkedlists.php',
+            type: 'tutorial',
+            source: 'W3Schools'
           }
         ]
       },
@@ -913,6 +1085,20 @@ print(is_balanced("({[]})"))  # True
 print(is_balanced("({[})"))   # False`,
             explanation: 'Classic stack application: checking if parentheses are balanced.'
           }
+        ],
+        resources: [
+          {
+            title: 'Stack Data Structure',
+            url: 'https://www.geeksforgeeks.org/dsa/stack-data-structure/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'Stack Tutorial',
+            url: 'https://www.w3schools.com/dsa/dsa_data_stacks.php',
+            type: 'tutorial',
+            source: 'W3Schools'
+          }
         ]
       },
       {
@@ -996,6 +1182,20 @@ class EfficientQueue:
         return len(self.items) == 0`,
             explanation: 'Using collections.deque provides O(1) operations for both ends.'
           }
+        ],
+        resources: [
+          {
+            title: 'Queue Data Structure',
+            url: 'https://www.geeksforgeeks.org/dsa/queue-data-structure/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'Queue Tutorial',
+            url: 'https://www.w3schools.com/dsa/dsa_data_queues.php',
+            type: 'tutorial',
+            source: 'W3Schools'
+          }
         ]
       },
       {
@@ -1078,6 +1278,20 @@ def level_order(root):
         if node.right:
             queue.append(node.right)`,
             explanation: 'BFS traversal using a queue to visit nodes level by level.'
+          }
+        ],
+        resources: [
+          {
+            title: 'Binary Tree Data Structure',
+            url: 'https://www.geeksforgeeks.org/dsa/binary-tree-data-structure/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'Tree Traversals',
+            url: 'https://www.geeksforgeeks.org/tree-traversals-inorder-preorder-and-postorder/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
           }
         ]
       },
@@ -1176,6 +1390,20 @@ def _min_node(self, node):
     return current`,
             explanation: 'BST deletion handling all three cases: leaf, one child, two children.'
           }
+        ],
+        resources: [
+          {
+            title: 'Binary Search Tree',
+            url: 'https://www.geeksforgeeks.org/binary-search-tree-data-structure/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'BST Operations',
+            url: 'https://www.w3schools.com/dsa/dsa_data_binarysearchtrees.php',
+            type: 'tutorial',
+            source: 'W3Schools'
+          }
         ]
       },
       {
@@ -1271,6 +1499,20 @@ def left_rotate(self, x):
     return root`,
             explanation: 'AVL insertion with automatic rebalancing using rotations.'
           }
+        ],
+        resources: [
+          {
+            title: 'AVL Tree Tutorial',
+            url: 'https://www.geeksforgeeks.org/introduction-to-avl-tree/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'AVL Tree Rotations',
+            url: 'https://www.w3schools.com/dsa/dsa_data_avl_trees.php',
+            type: 'tutorial',
+            source: 'W3Schools'
+          }
         ]
       },
       {
@@ -1353,6 +1595,20 @@ def binary_search(arr, target):
             right = mid - 1
     return -1`,
             explanation: 'Different algorithms with their time complexities. Note how the number of operations relates to input size n.'
+          }
+        ],
+        resources: [
+          {
+            title: 'DSA Tutorial - Big O Notation',
+            url: 'https://www.geeksforgeeks.org/dsa/dsa-tutorial-learn-data-structures-and-algorithms/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'Algorithm Complexity',
+            url: 'https://www.w3schools.com/dsa/dsa_timecomplexity_theory.php',
+            type: 'tutorial',
+            source: 'W3Schools'
           }
         ]
       },
@@ -1469,6 +1725,20 @@ for x in [5, 3, 7, 1]:
     heapq.heappush(max_heap, -x)
 print(-heapq.heappop(max_heap))  # 7 (largest)`,
             explanation: 'Python heapq provides efficient min-heap operations. For max-heap, negate values before inserting.'
+          }
+        ],
+        resources: [
+          {
+            title: 'Heap Data Structure',
+            url: 'https://www.geeksforgeeks.org/dsa/heap-data-structure/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'Binary Heap',
+            url: 'https://www.geeksforgeeks.org/dsa/binary-heap/',
+            type: 'reference',
+            source: 'GeeksforGeeks'
           }
         ]
       },
@@ -1596,6 +1866,20 @@ print(ht.search("apple"))  # 5`,
         return None`,
             explanation: 'Open addressing with linear probing. On collision, check the next consecutive slot.'
           }
+        ],
+        resources: [
+          {
+            title: 'Hash Table Data Structure',
+            url: 'https://www.geeksforgeeks.org/hashing-data-structure/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'Hash Tables Tutorial',
+            url: 'https://www.w3schools.com/dsa/dsa_theory_hashtables.php',
+            type: 'tutorial',
+            source: 'W3Schools'
+          }
         ]
       },
       {
@@ -1717,6 +2001,20 @@ print(ac.autocomplete("car"))  # ['car', 'card', 'care', 'careful']
 print(ac.autocomplete("ca"))   # ['cat', 'car', 'card', 'care', 'careful']`,
             explanation: 'Extended Trie for autocomplete functionality. Collects all words with a given prefix using DFS.'
           }
+        ],
+        resources: [
+          {
+            title: 'Trie Data Structure',
+            url: 'https://www.geeksforgeeks.org/trie-insert-and-search/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'Tries Tutorial',
+            url: 'https://www.w3schools.com/dsa/dsa_data_tries.php',
+            type: 'tutorial',
+            source: 'W3Schools'
+          }
         ]
       }
     ]
@@ -1802,6 +2100,26 @@ int main() {
     return 0;
 }`,
             explanation: 'Basic program showing output with printf() and input with scanf(). Note the & operator in scanf to pass the address of the variable.'
+          }
+        ],
+        resources: [
+          {
+            title: 'C Tutorial',
+            url: 'https://www.w3schools.com/c/',
+            type: 'tutorial',
+            source: 'W3Schools'
+          },
+          {
+            title: 'Learn C Programming',
+            url: 'https://www.learn-c.org/',
+            type: 'tutorial',
+            source: 'Learn-C.org'
+          },
+          {
+            title: 'C Programming Basics',
+            url: 'https://www.geeksforgeeks.org/c-programming-language/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
           }
         ]
       },
@@ -1897,6 +2215,20 @@ for (int i = 1; i <= 10; i++) {
 }`,
             explanation: 'Different loop constructs achieving similar results. The continue statement skips even numbers.'
           }
+        ],
+        resources: [
+          {
+            title: 'C Control Flow',
+            url: 'https://www.w3schools.com/c/c_conditions.php',
+            type: 'tutorial',
+            source: 'W3Schools'
+          },
+          {
+            title: 'C Loops',
+            url: 'https://www.geeksforgeeks.org/c-loops/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          }
         ]
       },
       {
@@ -1967,6 +2299,20 @@ int main() {
     return 0;
 }`,
             explanation: 'Pass by value creates a copy; changes don\'t affect the original. Pass by reference uses pointers to modify the original variable.'
+          }
+        ],
+        resources: [
+          {
+            title: 'C Functions',
+            url: 'https://www.w3schools.com/c/c_functions.php',
+            type: 'tutorial',
+            source: 'W3Schools'
+          },
+          {
+            title: 'Functions in C',
+            url: 'https://www.geeksforgeeks.org/c-functions/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
           }
         ]
       },
@@ -2051,6 +2397,26 @@ Always check buffer sizes. Use safe functions like \`strncpy()\` instead of \`st
 }`,
             explanation: 'Demonstrates getting addresses with & and dereferencing with *. Modifying *p changes the original variable x.'
           }
+        ],
+        resources: [
+          {
+            title: 'C Pointers',
+            url: 'https://www.w3schools.com/c/c_pointers.php',
+            type: 'tutorial',
+            source: 'W3Schools'
+          },
+          {
+            title: 'Pointers in C',
+            url: 'https://www.geeksforgeeks.org/c/c-pointers/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'C Pointers Tutorial',
+            url: 'https://www.learn-c.org/en/Pointers',
+            type: 'tutorial',
+            source: 'Learn-C.org'
+          }
         ]
       },
       {
@@ -2124,6 +2490,20 @@ int main() {
     return 0;
 }`,
             explanation: 'Shows array traversal and common string operations. sizeof trick calculates array size.'
+          }
+        ],
+        resources: [
+          {
+            title: 'C Arrays',
+            url: 'https://www.w3schools.com/c/c_arrays.php',
+            type: 'tutorial',
+            source: 'W3Schools'
+          },
+          {
+            title: 'Arrays in C',
+            url: 'https://www.geeksforgeeks.org/c-arrays/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
           }
         ]
       },
@@ -2218,6 +2598,20 @@ int main() {
 }`,
             explanation: 'Demonstrates structure definition with typedef, member access with dot and arrow operators, and passing structures to functions.'
           }
+        ],
+        resources: [
+          {
+            title: 'C Structures',
+            url: 'https://www.w3schools.com/c/c_structs.php',
+            type: 'tutorial',
+            source: 'W3Schools'
+          },
+          {
+            title: 'Structures in C',
+            url: 'https://www.geeksforgeeks.org/structures-c/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          }
         ]
       },
       {
@@ -2294,6 +2688,20 @@ int main() {
     return 0;
 }`,
             explanation: 'Factorial multiplies n by factorial of n-1 until reaching 1. sumArray adds last element to sum of remaining elements.'
+          }
+        ],
+        resources: [
+          {
+            title: 'Recursion in C',
+            url: 'https://www.geeksforgeeks.org/c-recursion/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'C Recursion Tutorial',
+            url: 'https://www.w3schools.com/c/c_functions_recursion.php',
+            type: 'tutorial',
+            source: 'W3Schools'
           }
         ]
       }
@@ -2402,6 +2810,26 @@ class OOPStyle {
     }
 }`,
             explanation: 'In procedural style, data (length, width) is separate from functions. In OOP, the Rectangle object owns its data and knows how to calculate its area.'
+          }
+        ],
+        resources: [
+          {
+            title: 'Java OOP Concepts',
+            url: 'https://docs.oracle.com/javase/tutorial/java/concepts/',
+            type: 'documentation',
+            source: 'Oracle'
+          },
+          {
+            title: 'Java OOP Tutorial',
+            url: 'https://www.w3schools.com/java/java_oop.asp',
+            type: 'tutorial',
+            source: 'W3Schools'
+          },
+          {
+            title: 'OOP in Java',
+            url: 'https://www.geeksforgeeks.org/java/object-oriented-programming-oops-concept-in-java/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
           }
         ]
       },
@@ -2535,6 +2963,20 @@ public class Main {
 }`,
             explanation: 'Student class defines blueprint with attributes and methods. Each Student object has its own name, age, and gpa. Getters/setters provide controlled access.'
           }
+        ],
+        resources: [
+          {
+            title: 'Java Classes and Objects',
+            url: 'https://docs.oracle.com/javase/tutorial/java/javaOO/index.html',
+            type: 'documentation',
+            source: 'Oracle'
+          },
+          {
+            title: 'Java Classes Tutorial',
+            url: 'https://www.w3schools.com/java/java_classes.asp',
+            type: 'tutorial',
+            source: 'W3Schools'
+          }
         ]
       },
       {
@@ -2643,6 +3085,20 @@ public class Main {
     }
 }`,
             explanation: 'Balance can only be modified through deposit/withdraw methods which include validation. Direct access is prevented by making fields private.'
+          }
+        ],
+        resources: [
+          {
+            title: 'Java Encapsulation',
+            url: 'https://www.w3schools.com/java/java_encapsulation.asp',
+            type: 'tutorial',
+            source: 'W3Schools'
+          },
+          {
+            title: 'Access Modifiers in Java',
+            url: 'https://www.geeksforgeeks.org/access-modifiers-java/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
           }
         ]
       },
@@ -2763,6 +3219,20 @@ public class Main {
 }`,
             explanation: 'Dog inherits from Animal. It can use inherited methods (sleep), override them (eat), and add new ones (bark). super() calls the parent constructor.'
           }
+        ],
+        resources: [
+          {
+            title: 'Java Inheritance',
+            url: 'https://docs.oracle.com/javase/tutorial/java/concepts/inheritance.html',
+            type: 'documentation',
+            source: 'Oracle'
+          },
+          {
+            title: 'Java Inheritance Tutorial',
+            url: 'https://www.w3schools.com/java/java_inheritance.asp',
+            type: 'tutorial',
+            source: 'W3Schools'
+          }
         ]
       },
       {
@@ -2881,6 +3351,20 @@ public class Main {
     }
 }`,
             explanation: 'Shape reference can hold Circle or Rectangle. The correct getArea() is called at runtime based on actual object type. This is runtime polymorphism.'
+          }
+        ],
+        resources: [
+          {
+            title: 'Java Polymorphism',
+            url: 'https://www.w3schools.com/java/java_polymorphism.asp',
+            type: 'tutorial',
+            source: 'W3Schools'
+          },
+          {
+            title: 'Polymorphism in Java',
+            url: 'https://www.geeksforgeeks.org/polymorphism-in-java/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
           }
         ]
       },
@@ -3011,6 +3495,26 @@ public class Main {
     }
 }`,
             explanation: 'Tesla extends Vehicle (inherits startEngine, implements move) and implements Electric interface. It can be referenced as Vehicle, Electric, or Tesla.'
+          }
+        ],
+        resources: [
+          {
+            title: 'Java Abstract Classes',
+            url: 'https://www.w3schools.com/java/java_abstract.asp',
+            type: 'tutorial',
+            source: 'W3Schools'
+          },
+          {
+            title: 'Java Interfaces',
+            url: 'https://www.w3schools.com/java/java_interface.asp',
+            type: 'tutorial',
+            source: 'W3Schools'
+          },
+          {
+            title: 'Abstract Classes vs Interfaces',
+            url: 'https://www.geeksforgeeks.org/difference-between-abstract-class-and-interface-in-java/',
+            type: 'reference',
+            source: 'GeeksforGeeks'
           }
         ]
       },
@@ -3144,6 +3648,26 @@ public class Main {
     }
 }`,
             explanation: 'Custom InsufficientFundsException provides meaningful error information. The withdraw method throws the exception, and the caller handles it with try-catch.'
+          }
+        ],
+        resources: [
+          {
+            title: 'Java Exceptions',
+            url: 'https://www.w3schools.com/java/java_try_catch.asp',
+            type: 'tutorial',
+            source: 'W3Schools'
+          },
+          {
+            title: 'Exception Handling in Java',
+            url: 'https://www.geeksforgeeks.org/exceptions-in-java/',
+            type: 'tutorial',
+            source: 'GeeksforGeeks'
+          },
+          {
+            title: 'Java Exceptions Tutorial',
+            url: 'https://docs.oracle.com/javase/tutorial/essential/exceptions/',
+            type: 'documentation',
+            source: 'Oracle'
           }
         ]
       }

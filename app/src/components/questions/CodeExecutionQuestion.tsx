@@ -229,9 +229,9 @@ export default function CodeExecutionQuestion({
 
       {/* Output */}
       {(output || error) && !submitted && (
-        <div className="p-3 bg-gray-800 rounded-lg">
+        <div className="p-3 bg-gray-800 rounded-lg overflow-hidden">
           <div className="text-xs font-medium text-gray-400 mb-2">Output:</div>
-          <pre className={`font-mono text-sm whitespace-pre-wrap ${error ? "text-red-400" : "text-green-400"}`}>
+          <pre className={`font-mono text-sm whitespace-pre-wrap break-words overflow-x-auto max-w-full ${error ? "text-red-400" : "text-green-400"}`}>
             {error || output || "(no output)"}
           </pre>
         </div>
@@ -266,18 +266,18 @@ export default function CodeExecutionQuestion({
                   Test Case {index + 1}
                 </span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 font-mono text-xs">
-                <div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 font-mono text-xs overflow-hidden">
+                <div className="min-w-0">
                   <span className="text-gray-500">Input:</span>
-                  <pre className="text-gray-700 dark:text-gray-300 mt-1">{result.input || "(empty)"}</pre>
+                  <pre className="text-gray-700 dark:text-gray-300 mt-1 whitespace-pre-wrap break-words overflow-x-auto max-w-full">{result.input || "(empty)"}</pre>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <span className="text-gray-500">Expected:</span>
-                  <pre className="text-gray-700 dark:text-gray-300 mt-1">{result.expected}</pre>
+                  <pre className="text-gray-700 dark:text-gray-300 mt-1 whitespace-pre-wrap break-words overflow-x-auto max-w-full">{result.expected}</pre>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <span className="text-gray-500">Actual:</span>
-                  <pre className={`mt-1 ${result.passed ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
+                  <pre className={`mt-1 whitespace-pre-wrap break-words overflow-x-auto max-w-full ${result.passed ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
                     {result.actual || "(empty)"}
                   </pre>
                 </div>
