@@ -1,65 +1,47 @@
-# Implementation Plan: Portfolio-Friendly Logo Assets
+# Implementation Plan: Logo Redesign - Book + Lightbulb
 
 Created: 2026-01-30
 Status: completed
 
 ## Requirements
 
-The user wants:
-1. Logo to be easily accessible/downloadable for portfolio display
-2. Multiple logo variants for different use cases
-3. Clear branding assets that can be grabbed independently
+Replace the upward arrow accent in the logo with a lightbulb symbol representing ideas/understanding. Keep the open book base design.
 
-## Current State
+## Design Concept
 
-**Where logo is currently displayed:**
-- Header navigation bar (36x36px, via `layout.tsx`)
-- Favicon in browser tab
-
-**Current files:**
-- `app/public/logo.svg` - Icon only (48x48 viewBox)
-- `app/public/favicon.svg` - Simplified icon with background (32x32 viewBox)
+**Book + Lightbulb** - Open book with a lightbulb emerging from or floating above the pages, symbolizing knowledge leading to ideas and understanding.
 
 ## Implementation Phases
 
-### Phase 1: Create Logo Variants
-- [ ] Create `logo-full.svg` - Full logo with "LearnEx" text (horizontal lockup)
-- [ ] Create `logo-stacked.svg` - Stacked version (icon above text)
-- [ ] Create `logo-dark.svg` - Version optimized for dark backgrounds
-- [ ] Keep existing `logo.svg` as icon-only version
+### Phase 1: Update Icon Logo
+- [ ] Redesign `logo.svg` with book + lightbulb
+- [ ] Keep indigo/purple color scheme
+- [ ] Maintain 48x48 viewBox
 
-### Phase 2: Create Brand Assets Directory
-- [ ] Create `/public/brand/` directory
-- [ ] Move/copy logo files to brand directory
-- [ ] Add a simple `README.md` with usage guidelines
+### Phase 2: Update Brand Variants
+- [ ] Update `brand/logo.svg`
+- [ ] Update `brand/logo-full.svg` (horizontal lockup)
+- [ ] Update `brand/logo-full-dark.svg`
+- [ ] Update `brand/logo-stacked.svg`
 
-### Phase 3: Add Logo Showcase Page (Optional)
-- [ ] Create `/brand` or `/about` page showing all logo variants
-- [ ] Include download links for each variant
-- [ ] Display usage guidelines
-
-## Proposed Logo Variants
-
-| File | Use Case | Dimensions |
-|------|----------|------------|
-| `logo.svg` | App icon, small spaces | 48x48 |
-| `logo-full.svg` | Headers, portfolio, social | 200x48 |
-| `logo-stacked.svg` | Square formats, app stores | 120x120 |
-| `logo-dark.svg` | Dark backgrounds | 200x48 |
-| `favicon.svg` | Browser favicon | 32x32 |
+### Phase 3: Update Favicon
+- [ ] Redesign `favicon.svg` with simplified lightbulb version
+- [ ] Ensure readability at 32x32 / 16x16
 
 ## Dependencies
 - None
 
 ## Risks
-- LOW: SVG text rendering may vary across browsers (mitigated by using paths for text)
+- LOW: Lightbulb detail may be lost at small sizes
+  - Mitigation: Use simplified geometric shape, not detailed bulb
 
 ## TDD Recommended: No
-**Reason:** This is asset creation and UI styling work. No business logic to test.
+**Reason:** Visual asset update only, no code logic to test.
 
-## Files to Create/Modify
-1. `app/public/brand/logo.svg` - Copy of icon
-2. `app/public/brand/logo-full.svg` - New horizontal lockup
-3. `app/public/brand/logo-stacked.svg` - New stacked version
-4. `app/public/brand/logo-dark.svg` - Dark background version
-5. `app/public/brand/README.md` - Usage guidelines
+## Files to Modify
+1. `app/public/logo.svg`
+2. `app/public/favicon.svg`
+3. `app/public/brand/logo.svg`
+4. `app/public/brand/logo-full.svg`
+5. `app/public/brand/logo-full-dark.svg`
+6. `app/public/brand/logo-stacked.svg`
