@@ -294,14 +294,43 @@ Cache Mapping Schemes:
 Cache Performance:
 - Hit: Data found in cache (fast)
 - Miss: Data not in cache, must fetch from main memory (slow)
-- Hit Rate = Hits / (Hits + Misses)`,
+- Hit Rate = Hits / (Hits + Misses)
+
+Cache Hierarchy (L1/L2/L3):
+\`\`\`
+Level   Size        Latency      Location
+L1      32-64 KB    ~4 cycles    Per core (split I-cache/D-cache)
+L2      256-512 KB  ~12 cycles   Per core
+L3      8-32 MB     ~40 cycles   Shared across cores
+RAM     8-64 GB     ~100 cycles  System-wide
+\`\`\`
+
+Write Policies:
+1. Write-Through:
+   - Every write goes to both cache AND main memory
+   - Memory always consistent, but slower writes
+   - Often uses write buffer to avoid stalling
+
+2. Write-Back:
+   - Writes only to cache initially
+   - "Dirty bit" marks modified lines
+   - Write to memory only when line is evicted
+   - Faster but needs cache coherence protocol
+
+Cache Coherence (Multi-core):
+When multiple cores have caches, they must stay synchronized:
+- MESI Protocol: Modified, Exclusive, Shared, Invalid states
+- Ensures all cores see consistent memory values
+- Hardware handles coherence automatically`,
         keyPoints: [
           'Cache exploits temporal and spatial locality',
           'Direct mapped: one possible location per block (simple, conflict-prone)',
           'Fully associative: any block can go anywhere (flexible, complex)',
           'Set associative: N choices per block (balanced approach)',
           'Higher hit rate = better performance',
-          'Write policies: write-through (immediate) vs write-back (delayed)'
+          'Write policies: write-through (immediate, consistent) vs write-back (faster, needs coherence)',
+          'L1 cache: smallest/fastest (~4 cycles), L3: largest/slowest (~40 cycles)',
+          'Cache coherence (MESI) ensures multi-core consistency'
         ],
         codeExamples: [
           {
@@ -376,6 +405,35 @@ Page Faults:
 - OS loads page from disk into RAM
 - Very expensive operation (disk is slow)
 
+Page Fault Handling Steps:
+1. CPU generates page fault exception
+2. OS checks if access is valid (segmentation fault if not)
+3. OS finds a free frame (or evicts a page)
+4. OS reads the required page from disk
+5. Page table is updated with new mapping
+6. Instruction is restarted
+
+Page Replacement Algorithms:
+When RAM is full and a new page is needed, one must be evicted:
+
+1. FIFO (First-In-First-Out):
+   - Replace the oldest page in memory
+   - Simple but can suffer from Belady's anomaly
+
+2. LRU (Least Recently Used):
+   - Replace page that hasn't been used longest
+   - Good performance but expensive to implement exactly
+   - Approximated using reference bits
+
+3. Optimal (OPT):
+   - Replace page that won't be used for longest time
+   - Theoretical best but impossible to implement (requires future knowledge)
+   - Used as benchmark to compare other algorithms
+
+4. Clock (Second Chance):
+   - FIFO with reference bit check
+   - Gives pages a "second chance" if recently accessed
+
 Benefits:
 - Programs can use more memory than available RAM
 - Memory protection between processes
@@ -385,8 +443,10 @@ Benefits:
           'Page table maps virtual pages to physical frames',
           'TLB caches recent translations for speed',
           'Page fault: required page not in RAM, must load from disk',
+          'Page replacement: FIFO (simple), LRU (good), Optimal (theoretical best)',
           'Each process has its own virtual address space',
-          'OS handles all address translation transparently'
+          'OS handles all address translation transparently',
+          'Thrashing occurs when system spends more time swapping than executing'
         ],
         codeExamples: [
           {
@@ -1315,16 +1375,38 @@ Operations:
 - For balanced BST: h = O(log n)
 - For skewed BST: h = O(n)
 
+Balanced vs Unbalanced BST:
+\`\`\`
+Balanced (random insertion):     Skewed (sorted insertion):
+        50                              10
+       /  \\                              \\
+      30   70                            20
+     / \\   / \\                            \\
+    20 40 60 80                          30
+                                          \\
+Height: O(log n)                         40
+Search: O(log n)
+                                    Height: O(n)
+                                    Search: O(n) - no better than linked list!
+\`\`\`
+
 Deletion Cases:
 1. Leaf node: Simply remove
-2. One child: Replace with child
-3. Two children: Replace with inorder successor (or predecessor)`,
+2. One child: Replace node with its child
+3. Two children: Find inorder successor (smallest in right subtree), copy its value, delete the successor
+
+Inorder Successor:
+- The next node in inorder traversal
+- For a node with right child: leftmost node in right subtree
+- For a node without right child: nearest ancestor for which node is in left subtree`,
         keyPoints: [
           'Left < Root < Right for all nodes',
           'Inorder traversal gives sorted order',
           'Average case: O(log n) for search/insert/delete',
-          'Worst case (skewed): O(n)',
-          'Deletion with two children uses inorder successor'
+          'Worst case (skewed tree): O(n) - tree becomes a linked list',
+          'Inserting sorted data creates worst-case skewed tree',
+          'Deletion with two children uses inorder successor',
+          'Use self-balancing trees (AVL, Red-Black) to avoid worst case'
         ],
         codeExamples: [
           {
@@ -1416,22 +1498,56 @@ def _min_node(self, node):
 
 Balance Factor = Height(Left Subtree) - Height(Right Subtree)
 - Must be -1, 0, or 1 for all nodes
-- If outside this range, rotations are needed
+- If |balance| > 1, rotations are needed to restore balance
 
-Rotations:
-1. Left Rotation (LL): Right-heavy, rotate left
-2. Right Rotation (RR): Left-heavy, rotate right
-3. Left-Right (LR): Left child is right-heavy
-4. Right-Left (RL): Right child is left-heavy
+Understanding Rotations:
+
+1. Right Rotation (LL Case - Left-Left):
+   When: Balance factor > 1 AND new node inserted in left subtree of left child
+   Action: Rotate right around the unbalanced node
+   Visual:
+       z                y
+      / \\             /   \\
+     y   T4   -->    x     z
+    / \\                   / \\
+   x   T3                T3  T4
+
+2. Left Rotation (RR Case - Right-Right):
+   When: Balance factor < -1 AND new node inserted in right subtree of right child
+   Action: Rotate left around the unbalanced node
+   Visual:
+     z                    y
+    / \\                 /   \\
+   T1  y      -->      z     x
+      / \\            / \\
+     T2  x          T1  T2
+
+3. Left-Right Rotation (LR Case):
+   When: Balance factor > 1 AND new node inserted in right subtree of left child
+   Action: Left rotate left child, then right rotate root
+   Visual:
+       z               z              x
+      / \\            / \\           /   \\
+     y   T4  -->    x   T4  -->   y     z
+    / \\            / \\           / \\   / \\
+   T1  x          y   T3        T1 T2 T3 T4
+      / \\        / \\
+     T2 T3      T1 T2
+
+4. Right-Left Rotation (RL Case):
+   When: Balance factor < -1 AND new node inserted in left subtree of right child
+   Action: Right rotate right child, then left rotate root
 
 Time Complexity:
-All operations (search, insert, delete) are O(log n) guaranteed because the tree stays balanced.`,
+All operations (search, insert, delete) are O(log n) guaranteed because the tree stays balanced.
+Unlike regular BST which can degrade to O(n) with sorted input, AVL maintains logarithmic height.`,
         keyPoints: [
-          'Balance factor must be -1, 0, or 1',
-          'Height is always O(log n)',
-          'Four rotation types: LL, RR, LR, RL',
-          'Guarantees O(log n) for all operations',
-          'More complex than BST but prevents worst-case O(n)'
+          'Balance factor = height(left) - height(right), must be -1, 0, or 1',
+          'Height is always O(log n) due to rebalancing',
+          'Four rotation types: LL (right), RR (left), LR (left-right), RL (right-left)',
+          'Guarantees O(log n) for search, insert, delete',
+          'More complex than BST but prevents worst-case O(n) of unbalanced trees',
+          'After insertion/deletion, check ancestors for balance and rotate if needed'
         ],
         codeExamples: [
           {
@@ -1549,14 +1665,42 @@ Memory required by an algorithm. Consider:
 Best, Average, Worst Case:
 - Best case: Minimum resources needed (often unrealistic)
 - Average case: Expected resources for typical input
-- Worst case: Maximum resources needed (often most important)`,
+- Worst case: Maximum resources needed (often most important)
+
+Amortized Analysis:
+When occasional operations are expensive but most are cheap, amortized analysis gives the average cost per operation over a sequence. Example: Dynamic arrays may occasionally need O(n) resize, but append is O(1) amortized.
+
+Methods for amortized analysis:
+- Aggregate method: Total cost / number of operations
+- Accounting method: Charge extra for cheap ops to pay for expensive ones
+- Potential method: Define a "potential function" tracking state changes
+
+Space-Time Tradeoffs:
+Often you can trade memory for speed or vice versa:
+- Caching/Memoization: Store computed results to avoid recalculation (more space, less time)
+- Lookup tables: Precompute values (more space, O(1) lookup)
+- Compression: Store less data but compute to decompress (less space, more time)
+- In-place algorithms: Use O(1) extra space but may be slower
+
+Practical Complexity Comparison (for n = 1,000,000):
+| Complexity  | Operations    | Time at 1B ops/sec |
+|-------------|---------------|---------------------|
+| O(1)        | 1             | 1 nanosecond        |
+| O(log n)    | 20            | 20 nanoseconds      |
+| O(n)        | 1,000,000     | 1 millisecond       |
+| O(n log n)  | 20,000,000    | 20 milliseconds     |
+| O(n²)       | 1 trillion    | 16 minutes          |
+| O(2ⁿ)       | Infeasible    | Heat death of universe |`,
         keyPoints: [
           'Big O describes upper bound (worst case) growth rate',
           'Drop constants and lower-order terms: O(2n + 5) = O(n)',
           'O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2ⁿ)',
           'Space complexity includes auxiliary space and recursion depth',
           'Analyze loops: single loop O(n), nested loops O(n²)',
-          'Recursion: consider tree of calls and work per call'
+          'Recursion: consider tree of calls and work per call',
+          'Amortized analysis: average cost per operation over many operations',
+          'Dynamic array append is O(1) amortized despite occasional O(n) resizes',
+          'Space-time tradeoff: memoization uses more memory for faster computation'
         ],
         codeExamples: [
           {
@@ -1595,6 +1739,68 @@ def binary_search(arr, target):
             right = mid - 1
     return -1`,
             explanation: 'Different algorithms with their time complexities. Note how the number of operations relates to input size n.'
+          },
+          {
+            title: 'Amortized Complexity - Dynamic Array',
+            language: 'python',
+            code: `class DynamicArray:
+    """Dynamic array demonstrating amortized O(1) append"""
+    def __init__(self):
+        self.capacity = 1
+        self.size = 0
+        self.arr = [None] * self.capacity
+
+    def append(self, item):
+        # If full, double capacity (O(n) operation)
+        if self.size == self.capacity:
+            self._resize(2 * self.capacity)  # Expensive!
+
+        # Normal append (O(1) operation)
+        self.arr[self.size] = item
+        self.size += 1
+
+    def _resize(self, new_capacity):
+        # Copy all elements to new array
+        new_arr = [None] * new_capacity
+        for i in range(self.size):
+            new_arr[i] = self.arr[i]
+        self.arr = new_arr
+        self.capacity = new_capacity
+
+# Amortized analysis for n appends:
+# Resizes happen at sizes: 1, 2, 4, 8, 16, ...
+# Total copy operations: 1 + 2 + 4 + 8 + ... + n/2 = n - 1
+# Total simple appends: n
+# Total work: 2n - 1 = O(n)
+# Amortized cost per append: O(n)/n = O(1)`,
+            explanation: 'Dynamic arrays occasionally resize (O(n)) but append is O(1) amortized. After n appends, total work is ~2n, giving O(1) per operation on average.'
+          },
+          {
+            title: 'Space-Time Tradeoff - Memoization',
+            language: 'python',
+            code: `# WITHOUT memoization: O(2^n) time, O(n) space (recursion stack)
+def fib_slow(n):
+    if n <= 1:
+        return n
+    return fib_slow(n-1) + fib_slow(n-2)  # Exponential!
+
+# WITH memoization: O(n) time, O(n) space (cache + stack)
+def fib_fast(n, memo={}):
+    if n in memo:
+        return memo[n]  # O(1) lookup
+    if n <= 1:
+        return n
+    memo[n] = fib_fast(n-1, memo) + fib_fast(n-2, memo)
+    return memo[n]
+
+# Space-Time Comparison:
+#           | Time   | Space  | fib(40) time
+# ----------|--------|--------|-------------
+# No memo   | O(2^n) | O(n)   | ~1 minute
+# With memo | O(n)   | O(n)   | ~0.001 ms
+
+# Tradeoff: Use O(n) extra space to reduce time from O(2^n) to O(n)`,
+            explanation: 'Memoization trades space for time by caching computed results. For Fibonacci, this reduces time complexity from exponential to linear.'
           }
         ],
         resources: [
@@ -2368,14 +2574,34 @@ Buffer overflow occurs when writing data beyond allocated memory bounds. This is
 char buffer[10];
 strcpy(buffer, "This string is too long!");  // DANGER: Overflow!
 \`\`\`
-Always check buffer sizes. Use safe functions like \`strncpy()\` instead of \`strcpy()\`, and \`fgets()\` instead of \`gets()\`.`,
+Always check buffer sizes. Use safe functions like \`strncpy()\` instead of \`strcpy()\`, and \`fgets()\` instead of \`gets()\`.
+
+Function Pointers:
+Function pointers store addresses of functions, enabling callbacks and runtime function selection:
+\`\`\`c
+int (*funcPtr)(int, int);  // Pointer to function taking 2 ints, returning int
+funcPtr = &add;            // Point to add function
+int result = funcPtr(5, 3); // Call through pointer
+\`\`\`
+
+Void Pointers:
+Generic pointers that can point to any data type:
+\`\`\`c
+void *ptr;
+int x = 10;
+ptr = &x;                    // Can point to int
+int val = *(int *)ptr;       // Must cast before dereferencing
+\`\`\``,
         keyPoints: [
           '& gets address, * dereferences (gets value at address)',
           'Pointer arithmetic: p++ moves by sizeof(type) bytes',
           'Array name is essentially a pointer to first element',
           'NULL pointer is a pointer that points to nothing',
           'Buffer overflow: writing beyond allocated memory is a major security risk',
-          'Use strncpy/fgets instead of strcpy/gets to prevent overflow'
+          'Use strncpy/fgets instead of strcpy/gets to prevent overflow',
+          'Function pointers enable callbacks and polymorphism in C',
+          'Double pointers (**) used for dynamic 2D arrays and modifying pointers in functions',
+          'Void pointers (void *) are generic and must be cast before dereferencing'
         ],
         codeExamples: [
           {
@@ -2396,6 +2622,73 @@ Always check buffer sizes. Use safe functions like \`strncpy()\` instead of \`st
     return 0;
 }`,
             explanation: 'Demonstrates getting addresses with & and dereferencing with *. Modifying *p changes the original variable x.'
+          },
+          {
+            title: 'Function Pointers - Callback Pattern',
+            language: 'c',
+            code: `#include <stdio.h>
+
+int add(int a, int b) { return a + b; }
+int subtract(int a, int b) { return a - b; }
+int multiply(int a, int b) { return a * b; }
+
+// Function that takes a function pointer as parameter
+int calculate(int x, int y, int (*operation)(int, int)) {
+    return operation(x, y);
+}
+
+int main() {
+    // Declare function pointer
+    int (*op)(int, int);
+
+    op = add;
+    printf("5 + 3 = %d\\n", op(5, 3));           // 8
+
+    // Pass function pointer to another function
+    printf("5 - 3 = %d\\n", calculate(5, 3, subtract));  // 2
+    printf("5 * 3 = %d\\n", calculate(5, 3, multiply));  // 15
+
+    return 0;
+}`,
+            explanation: 'Function pointers allow passing functions as arguments, enabling callback patterns. The calculate() function can use any operation passed to it.'
+          },
+          {
+            title: 'Double Pointers - Dynamic Allocation',
+            language: 'c',
+            code: `#include <stdio.h>
+#include <stdlib.h>
+
+// Function to allocate array - needs double pointer to modify caller's pointer
+void allocateArray(int **arr, int size) {
+    *arr = (int *)malloc(size * sizeof(int));
+    for (int i = 0; i < size; i++) {
+        (*arr)[i] = i * 10;  // Initialize with values
+    }
+}
+
+// 2D array using double pointer
+int** create2DArray(int rows, int cols) {
+    int **arr = (int **)malloc(rows * sizeof(int *));
+    for (int i = 0; i < rows; i++) {
+        arr[i] = (int *)malloc(cols * sizeof(int));
+    }
+    return arr;
+}
+
+int main() {
+    int *myArray = NULL;
+    allocateArray(&myArray, 5);  // Pass address of pointer
+
+    printf("Array: ");
+    for (int i = 0; i < 5; i++) {
+        printf("%d ", myArray[i]);  // 0 10 20 30 40
+    }
+    printf("\\n");
+
+    free(myArray);
+    return 0;
+}`,
+            explanation: 'Double pointers are essential when a function needs to modify the pointer itself (not just the data it points to). Also used for dynamic 2D arrays.'
           }
         ],
         resources: [
@@ -2455,14 +2748,40 @@ String Functions (string.h):
 - strlen(): Get string length
 - strcpy(): Copy string
 - strcat(): Concatenate strings
-- strcmp(): Compare strings`,
+- strcmp(): Compare strings
+
+Dynamic Arrays (Heap Allocation):
+Static arrays have fixed size. For dynamic sizes, use heap allocation:
+\`\`\`c
+int *arr = (int *)malloc(n * sizeof(int));  // Allocate n integers
+arr = (int *)realloc(arr, m * sizeof(int)); // Resize to m integers
+free(arr);                                   // Free memory when done
+\`\`\`
+
+2D Dynamic Arrays:
+\`\`\`c
+int **arr = (int **)malloc(rows * sizeof(int *));
+for (int i = 0; i < rows; i++) {
+    arr[i] = (int *)malloc(cols * sizeof(int));
+}
+\`\`\`
+
+Memory Layout:
+\`\`\`
+Stack Array:    arr[0] arr[1] arr[2] ... (contiguous, fixed)
+Heap Array:     ptr → [data...] (contiguous, resizable)
+2D Stack:       [row0][row1][row2] (all contiguous)
+2D Heap:        ptr → [ptr0, ptr1, ptr2] → each row separate
+\`\`\``,
         keyPoints: [
           'Array indices start at 0',
-          'Array size must be known at compile time (for stack arrays)',
+          'Static arrays: size known at compile time, allocated on stack',
+          'Dynamic arrays: use malloc/calloc for heap allocation, free when done',
           'Array name decays to pointer when passed to function',
           'Strings are null-terminated character arrays (\\0)',
-          '2D arrays stored in row-major order',
-          'No bounds checking in C - can cause buffer overflow'
+          '2D arrays stored in row-major order (row by row)',
+          'No bounds checking in C - can cause buffer overflow',
+          'realloc() can resize dynamic arrays (may move data)'
         ],
         codeExamples: [
           {
@@ -2490,6 +2809,46 @@ int main() {
     return 0;
 }`,
             explanation: 'Shows array traversal and common string operations. sizeof trick calculates array size.'
+          },
+          {
+            title: 'Dynamic Memory Allocation',
+            language: 'c',
+            code: `#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int n = 5;
+
+    // Allocate array on heap
+    int *arr = (int *)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        printf("Memory allocation failed!\\n");
+        return 1;
+    }
+
+    // Initialize
+    for (int i = 0; i < n; i++) {
+        arr[i] = i * 10;
+    }
+
+    // Resize array (double the size)
+    n = 10;
+    arr = (int *)realloc(arr, n * sizeof(int));
+
+    // Add more elements
+    for (int i = 5; i < n; i++) {
+        arr[i] = i * 10;
+    }
+
+    // Print all
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);  // 0 10 20 30 40 50 60 70 80 90
+    }
+
+    free(arr);  // Always free heap memory!
+    return 0;
+}`,
+            explanation: 'Dynamic arrays use malloc for allocation, realloc for resizing, and free for deallocation. Always check malloc return value and free memory when done.'
           }
         ],
         resources: [
@@ -2761,14 +3120,49 @@ Benefits of OOP:
 - Modularity and code reuse
 - Easier maintenance and updates
 - Better modeling of real-world entities
-- Improved collaboration in teams`,
+- Improved collaboration in teams
+
+SOLID Principles (Design Guidelines):
+
+1. Single Responsibility Principle (SRP):
+A class should have only one reason to change. Each class handles one specific responsibility.
+
+2. Open/Closed Principle (OCP):
+Classes should be open for extension but closed for modification. Add new features by extending, not changing existing code.
+
+3. Liskov Substitution Principle (LSP):
+Subtypes must be substitutable for their base types. Child classes should work anywhere parent is expected.
+
+4. Interface Segregation Principle (ISP):
+Many specific interfaces are better than one general interface. Clients shouldn't depend on methods they don't use.
+
+5. Dependency Inversion Principle (DIP):
+Depend on abstractions, not concrete implementations. High-level modules shouldn't depend on low-level details.
+
+Composition vs Inheritance:
+
+Inheritance ("is-a" relationship):
+- Dog IS-A Animal, Car IS-A Vehicle
+- Tight coupling between parent and child
+- Can lead to fragile hierarchies
+- Use when: true type relationship exists
+
+Composition ("has-a" relationship):
+- Car HAS-A Engine, House HAS-A Room
+- Loose coupling, more flexible
+- Easier to change implementations
+- Use when: objects contain other objects
+- Preferred in modern design: "Favor composition over inheritance"`,
         keyPoints: [
           'OOP organizes code around objects, not functions',
           'Objects combine data (attributes) and behavior (methods)',
           'Four pillars: Encapsulation, Abstraction, Inheritance, Polymorphism',
           'Encapsulation hides internal details, exposes clean interface',
           'Inheritance enables code reuse through parent-child relationships',
-          'Polymorphism allows same method name with different behaviors'
+          'Polymorphism allows same method name with different behaviors',
+          'SOLID principles guide maintainable, extensible design',
+          'Single Responsibility: one class, one reason to change',
+          'Favor composition over inheritance for flexibility'
         ],
         codeExamples: [
           {
@@ -2810,6 +3204,81 @@ class OOPStyle {
     }
 }`,
             explanation: 'In procedural style, data (length, width) is separate from functions. In OOP, the Rectangle object owns its data and knows how to calculate its area.'
+          },
+          {
+            title: 'Composition vs Inheritance',
+            language: 'java',
+            code: `// INHERITANCE APPROACH (is-a relationship)
+// Problem: Flying breaks for Penguin!
+class Bird {
+    void fly() { System.out.println("Flying!"); }
+}
+class Penguin extends Bird {
+    // Penguins can't fly - but inherit fly()!
+    // Either override to throw exception (ugly) or inherit broken behavior
+}
+
+// COMPOSITION APPROACH (has-a relationship) - Better!
+interface Flyable {
+    void fly();
+}
+class Wings implements Flyable {
+    public void fly() { System.out.println("Flying with wings!"); }
+}
+
+class Sparrow {
+    private Flyable flyBehavior = new Wings();  // HAS-A wings
+    void performFly() { flyBehavior.fly(); }
+}
+
+class Penguin2 {
+    // No fly behavior - penguin simply doesn't have that capability
+    void swim() { System.out.println("Swimming!"); }
+}
+
+// Composition is more flexible:
+// - Easy to change behavior at runtime
+// - No inherited methods that don't make sense
+// - Follows "favor composition over inheritance"`,
+            explanation: 'Inheritance can force inappropriate behaviors on subclasses (Penguin inheriting fly()). Composition lets you mix in only the behaviors that make sense for each class.'
+          },
+          {
+            title: 'Single Responsibility Principle',
+            language: 'java',
+            code: `// BAD: One class doing too many things
+class Employee {
+    String name;
+    double salary;
+
+    void calculatePay() { /* payroll logic */ }
+    void saveToDatabase() { /* database logic */ }
+    void generateReport() { /* report logic */ }
+    // 3 reasons to change: pay rules, database, reports
+}
+
+// GOOD: Separated responsibilities
+class Employee {
+    String name;
+    double salary;
+    // Just holds employee data
+}
+
+class PayrollCalculator {
+    double calculatePay(Employee e) { /* only payroll */ }
+}
+
+class EmployeeRepository {
+    void save(Employee e) { /* only database */ }
+}
+
+class EmployeeReportGenerator {
+    String generate(Employee e) { /* only reports */ }
+}
+
+// Each class has ONE reason to change
+// Changes to payroll rules don't affect database code
+// Changes to reports don't affect payroll calculations`,
+            explanation: 'SRP means each class should have only one responsibility. This makes code easier to understand, test, and maintain.'
           }
         ],
         resources: [

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Oswald, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import Image from "next/image";
 
 const oswald = Oswald({
   variable: "--font-oswald",
@@ -23,6 +24,9 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "LearnEx",
   description: "Adaptive learning platform for NTU Semester 2 courses",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -40,6 +44,13 @@ export default function RootLayout({
             <div className="flex justify-between h-20">
               <div className="flex items-center">
                 <Link href="/" className="flex items-center gap-3 group">
+                  <Image
+                    src="/logo.svg"
+                    alt="LearnEx Logo"
+                    width={36}
+                    height={36}
+                    className="transition-transform group-hover:scale-105"
+                  />
                   <span className="font-heading text-2xl font-bold tracking-tight text-neutral-900 dark:text-white uppercase">
                     Learn<span className="text-neutral-400">Ex</span>
                   </span>
