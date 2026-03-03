@@ -9,6 +9,7 @@ import { Question } from "@/types";
 import { updateTopicProgress, getTopicProgress, updateCard, getCard } from "@/lib/storage";
 import { createCard, scheduleCard } from "@/lib/fsrs";
 import { DragDropQuestion, MatchingQuestion, CodeExecutionQuestion } from "@/components/questions";
+import QuestionHint from "@/components/questions/QuestionHint";
 
 export default function QuizPage() {
   const params = useParams();
@@ -25,6 +26,7 @@ export default function QuizPage() {
   const [showResult, setShowResult] = useState(false);
   const [answers, setAnswers] = useState<{ correct: boolean; questionId: string }[]>([]);
   const [quizComplete, setQuizComplete] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
 
   useEffect(() => {
     // Shuffle and select up to 5 questions
@@ -88,12 +90,12 @@ export default function QuizPage() {
     setShowResult(true);
     setAnswers([...answers, { correct: isCorrect, questionId: currentQuestion.id }]);
 
-    // Update FSRS card
+    // Update FSRS card (hint penalty: Hard instead of Good when correct with hint)
     let card = getCard(currentQuestion.id);
     if (!card) {
       card = createCard(currentQuestion.id, topicId);
     }
-    const rating = isCorrect ? 3 : 1; // Good or Again
+    const rating = isCorrect ? (hintUsed ? 2 : 3) : 1; // Good/Hard/Again
     const updatedCard = scheduleCard(card, rating as 1 | 2 | 3 | 4);
     updateCard(updatedCard.card);
   };
@@ -103,6 +105,7 @@ export default function QuizPage() {
       setCurrentIndex(currentIndex + 1);
       setSelectedAnswer(null);
       setShowResult(false);
+      setHintUsed(false);
     } else {
       // Quiz complete - calculate if last answer was correct
       let lastAnswerCorrect = false;
@@ -400,6 +403,15 @@ export default function QuizPage() {
                 updateCard(updatedCard.card);
               }}
               disabled={showResult}
+            />
+          )}
+
+          {/* Hint - visible before answer is revealed for standard question types */}
+          {!showResult && !['drag_drop', 'matching', 'code_execution'].includes(currentQuestion.type) && (
+            <QuestionHint
+              question={currentQuestion}
+              topicSummary={topic.summary}
+              onHintUsed={() => setHintUsed(true)}
             />
           )}
 
