@@ -51,3 +51,7 @@ next-env.d.ts
 .DS_Store
 .AppleDouble
 .LSOverride
+
+# Claude Code
+.claude.backup*/
+*.stackdump

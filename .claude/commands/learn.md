@@ -1,3 +1,10 @@
+---
+description: Extract reusable patterns with smart auto-detection
+ecc_base_version: "5230892"
+last_synced: "2026-01-26"
+customizations: "Major expansion - auto-detect mode, 3 detection types, structured output"
+---
+
 # /learn - Extract Reusable Patterns
 
 Analyze the current session and extract valuable learnings using smart auto-detection.
@@ -45,7 +52,7 @@ When session analysis identifies improvements for future work.
 - "I kept making the same mistake..."
 - "How can I improve my workflow?"
 
-**Output:** Suggestions for CLAUDE.md or instructions.md updates
+**Output:** Suggestions for CLAUDE.md or project-settings.md updates
 
 ### Eureka Mode
 
@@ -205,3 +212,14 @@ This command automatically escalates to specialized agents when:
 ### Escalation Triggers
 - **deep-reflector**: Always invoked to analyze session context and format output
 - **documentation-validator**: Use to ensure learned patterns are accurate and well-formatted
+
+## Next Steps Output
+
+**After completing this command, always display the following block at the end of your output:**
+
+```
+---
+Next: /instinct status - View all learned instincts
+ Or: /evolve - Cluster instincts into commands, skills, or agents
+---
+```

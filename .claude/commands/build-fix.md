@@ -1,3 +1,10 @@
+---
+description: Incrementally fix TypeScript and build errors
+ecc_base_version: "5230892"
+last_synced: "2026-01-26"
+customizations: "Agent escalation section added"
+---
+
 # Build and Fix
 
 Incrementally fix TypeScript and build errors:
@@ -42,3 +49,15 @@ This command automatically escalates to specialized agents when:
 - **build-error-resolver**: Use for persistent or complex build failures
 - **ui-engineer**: Use for Next.js/React specific build issues
 - **architect**: Use when build errors indicate architectural problems
+
+## Next Steps Output
+
+**After completing this command, always display the following block at the end of your output:**
+
+```
+---
+Next: /run - Resume plan execution
+ Or: /verify - Run full verification
+ Or: /tdd - Run tests to confirm fixes
+---
+```

@@ -53,7 +53,7 @@ When `/learn` is invoked, analyze recent conversation to determine the learning 
 - End of a long debugging or development session
 - Session with multiple failed attempts before success
 
-**Output:** CLAUDE.md or instructions.md suggestions
+**Output:** CLAUDE.md or project-settings.md suggestions
 
 #### Eureka Mode
 **Indicators in conversation:**
@@ -98,10 +98,10 @@ description: [Short description for autocomplete]
 - [Related patterns or commands]
 ```
 
-### Reflection Output (Suggestions for CLAUDE.md/instructions.md)
+### Reflection Output (Suggestions for CLAUDE.md/project-settings.md)
 
 ```markdown
-## Proposed Addition to [CLAUDE.md | instructions.md]
+## Proposed Addition to [CLAUDE.md | project-settings.md]
 
 ### Section: [Where to add]
 
@@ -175,7 +175,7 @@ def detect_learning_mode(context):
 ### Step 3: Content Generation
 ```python
 # For patterns: Create reusable command file
-# For reflections: Draft CLAUDE.md/instructions.md additions
+# For reflections: Draft CLAUDE.md/project-settings.md additions
 # For eureka: Create quick insight file
 ```
 

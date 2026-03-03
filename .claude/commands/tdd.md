@@ -1,294 +1,237 @@
 ---
-description: Enforce test-driven development workflow. Scaffold interfaces, generate tests FIRST, then implement minimal code to pass. Ensure 80%+ coverage.
+description: Test utilities - run tests, analyze coverage, execute E2E tests. Does NOT implement code.
+ecc_base_version: "5230892"
+last_synced: "2026-01-28"
+customizations: "Test utilities only, implementation moved to /run"
 ---
 
-# TDD Command
+# /tdd - Test Utilities
 
-This command invokes the **tdd-guide** agent to enforce test-driven development methodology.
+Run and analyze tests. **Does NOT implement code** - use `/run` for implementation.
+
+## Usage
+
+```bash
+/tdd                    # Run all tests
+/tdd unit               # Run unit tests only
+/tdd integration        # Run integration tests (NO MOCKING enforced)
+/tdd e2e                # Run E2E tests with Playwright
+/tdd coverage           # Analyze coverage, show gaps
+/tdd --full             # All tests + coverage report
+/tdd --from-plan        # Run tests based on plan's Test Strategy
+```
 
 ## What This Command Does
 
-1. **Scaffold Interfaces** - Define types/interfaces first
-2. **Generate Tests First** - Write failing tests (RED)
-3. **Implement Minimal Code** - Write just enough to pass (GREEN)
-4. **Refactor** - Improve code while keeping tests green (REFACTOR)
-5. **Verify Coverage** - Ensure 80%+ test coverage
+| Mode | Action |
+|------|--------|
+| Default | Run all tests in the project |
+| `unit` | Run unit tests only |
+| `integration` | Run integration tests (validates NO MOCKING policy) |
+| `e2e` | Run Playwright E2E tests |
+| `coverage` | Analyze coverage and show uncovered files |
+| `--full` | All test types + coverage + no-stubs check |
+| `--from-plan` | Read Test Strategy from `.claude/plans/current.md` and run appropriate tests |
 
-## When to Use
+## Mode: Default (Run All Tests)
 
-Use `/tdd` when:
-- Implementing new features
-- Adding new functions/components
-- Fixing bugs (write test that reproduces bug first)
-- Refactoring existing code
-- Building critical business logic
-
-## How It Works
-
-The tdd-guide agent will:
-
-1. **Define interfaces** for inputs/outputs
-2. **Write tests that will FAIL** (because code doesn't exist yet)
-3. **Run tests** and verify they fail for the right reason
-4. **Write minimal implementation** to make tests pass
-5. **Run tests** and verify they pass
-6. **Refactor** code while keeping tests green
-7. **Check coverage** and add more tests if below 80%
-
-## TDD Cycle
+Runs the project's test suite:
 
 ```
-RED → GREEN → REFACTOR → REPEAT
+/tdd
 
-RED:      Write a failing test
-GREEN:    Write minimal code to pass
-REFACTOR: Improve code, keep tests passing
-REPEAT:   Next feature/scenario
+Agent:
+Running all tests...
+
+ PASS  tests/unit/utils.test.ts (8 tests)
+ PASS  tests/unit/api.test.ts (12 tests)
+ PASS  tests/integration/db.test.ts (5 tests)
+
+Test Suites: 3 passed, 3 total
+Tests:       25 passed, 25 total
+Time:        4.2s
 ```
 
-## Example Usage
+## Mode: `unit`
+
+Focus on unit tests only:
 
 ```
-User: /tdd I need a function to calculate market liquidity score
+/tdd unit
 
-Agent (tdd-guide):
-# TDD Session: Market Liquidity Score Calculator
+Agent:
+Running unit tests...
 
-## Step 1: Define Interface (SCAFFOLD)
+ PASS  tests/unit/utils.test.ts
+   ✓ formatCurrency formats correctly (3ms)
+   ✓ parseDate handles ISO format (2ms)
+   ✓ validateInput rejects empty (1ms)
 
-```typescript
-// lib/liquidity.ts
-export interface MarketData {
-  totalVolume: number
-  bidAskSpread: number
-  activeTraders: number
-  lastTradeTime: Date
-}
-
-export function calculateLiquidityScore(market: MarketData): number {
-  // TODO: Implementation
-  throw new Error('Not implemented')
-}
+Tests: 8 passed
+Time:  1.2s
 ```
 
-## Step 2: Write Failing Test (RED)
+## Mode: `integration`
 
-```typescript
-// lib/liquidity.test.ts
-import { calculateLiquidityScore } from './liquidity'
+Integration tests with **NO MOCKING** policy enforcement:
 
-describe('calculateLiquidityScore', () => {
-  it('should return high score for liquid market', () => {
-    const market = {
-      totalVolume: 100000,
-      bidAskSpread: 0.01,
-      activeTraders: 500,
-      lastTradeTime: new Date()
-    }
+```
+/tdd integration
 
-    const score = calculateLiquidityScore(market)
+Agent:
+Checking NO MOCKING policy...
+ ✓ No jest.mock found
+ ✓ No vi.mock found
+ ✓ No @patch decorators found
 
-    expect(score).toBeGreaterThan(80)
-    expect(score).toBeLessThanOrEqual(100)
-  })
+Running integration tests...
 
-  it('should return low score for illiquid market', () => {
-    const market = {
-      totalVolume: 100,
-      bidAskSpread: 0.5,
-      activeTraders: 2,
-      lastTradeTime: new Date(Date.now() - 86400000) // 1 day ago
-    }
+ PASS  tests/integration/api.test.ts
+   ✓ POST /api/users creates user (120ms)
+   ✓ GET /api/users returns list (45ms)
 
-    const score = calculateLiquidityScore(market)
-
-    expect(score).toBeLessThan(30)
-    expect(score).toBeGreaterThanOrEqual(0)
-  })
-
-  it('should handle edge case: zero volume', () => {
-    const market = {
-      totalVolume: 0,
-      bidAskSpread: 0,
-      activeTraders: 0,
-      lastTradeTime: new Date()
-    }
-
-    const score = calculateLiquidityScore(market)
-
-    expect(score).toBe(0)
-  })
-})
+Tests: 5 passed
+Time:  8.4s
 ```
 
-## Step 3: Run Tests - Verify FAIL
+### NO MOCKING Policy
 
+| Test Tier | Mocking Allowed? | Infrastructure |
+|-----------|------------------|----------------|
+| Unit | Yes | In-memory, mocked |
+| Integration | **NO** | Real Docker services |
+| E2E | **NO** | Real infrastructure |
+
+**Why NO MOCKING?**
+1. Mocks hide real integration issues
+2. Real infrastructure catches actual bugs
+3. Production-like testing prevents surprises
+
+**Forbidden patterns in integration/E2E:**
 ```bash
-npm test lib/liquidity.test.ts
-
-FAIL lib/liquidity.test.ts
-  ✕ should return high score for liquid market (2 ms)
-    Error: Not implemented
-
-1 test failed, 0 passed
+jest.mock()      # ❌
+vi.mock()        # ❌
+@patch()         # ❌ (Python)
+sinon.stub()     # ❌
 ```
 
-✅ Tests fail as expected. Ready to implement.
+## Mode: `e2e`
 
-## Step 4: Implement Minimal Code (GREEN)
+End-to-end tests with Playwright:
 
-```typescript
-// lib/liquidity.ts
-export function calculateLiquidityScore(market: MarketData): number {
-  // Handle zero volume edge case
-  if (market.totalVolume === 0) {
-    return 0
-  }
+```
+/tdd e2e
 
-  // Calculate component scores (0-100 scale)
-  const volumeScore = Math.min(market.totalVolume / 1000, 100)
-  const spreadScore = Math.max(100 - (market.bidAskSpread * 1000), 0)
-  const traderScore = Math.min(market.activeTraders / 10, 100)
+Agent:
+Running E2E tests with Playwright...
 
-  // Recent activity bonus
-  const hoursSinceLastTrade = (Date.now() - market.lastTradeTime.getTime()) / (1000 * 60 * 60)
-  const recencyScore = Math.max(100 - (hoursSinceLastTrade * 10), 0)
+Running 12 tests using 3 workers
 
-  // Weighted average
-  const score = (
-    volumeScore * 0.4 +
-    spreadScore * 0.3 +
-    traderScore * 0.2 +
-    recencyScore * 0.1
-  )
+  ✓ user-flow.spec.ts:5 - login flow (4.2s)
+  ✓ user-flow.spec.ts:15 - signup flow (5.1s)
+  ✓ market.spec.ts:8 - search markets (3.8s)
 
-  return Math.min(Math.max(score, 0), 100) // Clamp to 0-100
-}
+12 passed (45.2s)
+
+Artifacts:
+- Screenshots: test-results/screenshots/
+- Videos: test-results/videos/
+- HTML Report: playwright-report/index.html
+
+View report: npx playwright show-report
 ```
 
-## Step 5: Run Tests - Verify PASS
-
-```bash
-npm test lib/liquidity.test.ts
-
-PASS lib/liquidity.test.ts
-  ✓ should return high score for liquid market (3 ms)
-  ✓ should return low score for illiquid market (2 ms)
-  ✓ should handle edge case: zero volume (1 ms)
-
-3 tests passed
-```
-
-✅ All tests passing!
-
-## Step 6: Refactor (IMPROVE)
-
-```typescript
-// lib/liquidity.ts - Refactored with constants and better readability
-const WEIGHTS = {
-  VOLUME: 0.4,
-  SPREAD: 0.3,
-  TRADERS: 0.2,
-  RECENCY: 0.1,
-} as const
-
-const SCALE_FACTORS = {
-  VOLUME: 1000,
-  SPREAD: 1000,
-  TRADERS: 10,
-  RECENCY_PENALTY: 10,
-} as const
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max)
-}
-
-export function calculateLiquidityScore(market: MarketData): number {
-  if (market.totalVolume === 0) return 0
-
-  const volumeScore = Math.min(market.totalVolume / SCALE_FACTORS.VOLUME, 100)
-  const spreadScore = clamp(100 - (market.bidAskSpread * SCALE_FACTORS.SPREAD), 0, 100)
-  const traderScore = Math.min(market.activeTraders / SCALE_FACTORS.TRADERS, 100)
-
-  const hoursSinceLastTrade = (Date.now() - market.lastTradeTime.getTime()) / (1000 * 60 * 60)
-  const recencyScore = clamp(100 - (hoursSinceLastTrade * SCALE_FACTORS.RECENCY_PENALTY), 0, 100)
-
-  const weightedScore =
-    volumeScore * WEIGHTS.VOLUME +
-    spreadScore * WEIGHTS.SPREAD +
-    traderScore * WEIGHTS.TRADERS +
-    recencyScore * WEIGHTS.RECENCY
-
-  return clamp(weightedScore, 0, 100)
-}
-```
-
-## Step 7: Verify Tests Still Pass
-
-```bash
-npm test lib/liquidity.test.ts
-
-PASS lib/liquidity.test.ts
-  ✓ should return high score for liquid market (3 ms)
-  ✓ should return low score for illiquid market (2 ms)
-  ✓ should handle edge case: zero volume (1 ms)
-
-3 tests passed
-```
-
-✅ Refactoring complete, tests still passing!
-
-## Step 8: Check Coverage
-
-```bash
-npm test -- --coverage lib/liquidity.test.ts
-
-File           | % Stmts | % Branch | % Funcs | % Lines
----------------|---------|----------|---------|--------
-liquidity.ts   |   100   |   100    |   100   |   100
-
-Coverage: 100% ✅ (Target: 80%)
-```
-
-✅ TDD session complete!
-```
-
-## TDD Best Practices
+### E2E Best Practices
 
 **DO:**
-- ✅ Write the test FIRST, before any implementation
-- ✅ Run tests and verify they FAIL before implementing
-- ✅ Write minimal code to make tests pass
-- ✅ Refactor only after tests are green
-- ✅ Add edge cases and error scenarios
-- ✅ Aim for 80%+ coverage (100% for critical code)
+- Use Page Object Model pattern
+- Use `data-testid` attributes for selectors
+- Run tests in CI with retries
+- Capture artifacts on failure
 
 **DON'T:**
-- ❌ Write implementation before tests
-- ❌ Skip running tests after each change
-- ❌ Write too much code at once
-- ❌ Ignore failing tests
-- ❌ Test implementation details (test behavior)
-- ❌ Mock everything (prefer integration tests)
+- Use brittle CSS selectors
+- Mock API calls
+- Ignore flaky tests
+- Skip cross-browser testing
 
-## Test Types to Include
+## Mode: `coverage`
 
-**Unit Tests** (Function-level):
-- Happy path scenarios
-- Edge cases (empty, null, max values)
-- Error conditions
-- Boundary values
+Analyze test coverage and identify gaps:
 
-**Integration Tests** (Component-level):
-- API endpoints
-- Database operations
-- External service calls
-- React components with hooks
+```
+/tdd coverage
 
-**E2E Tests** (use `/e2e` command):
-- Critical user flows
-- Multi-step processes
-- Full stack integration
+Agent:
+Running tests with coverage...
+
+File                    | Stmts | Branch | Funcs | Lines |
+------------------------|-------|--------|-------|-------|
+lib/utils.ts            |  92%  |  88%   |  95%  |  92%  | ✓
+lib/api.ts              |  85%  |  80%   |  90%  |  85%  | ✓
+lib/notifications.ts    |  45%  |  30%   |  50%  |  45%  | ✗
+lib/auth.ts             |  78%  |  70%   |  85%  |  78%  | ✗
+
+Overall Coverage: 75%
+
+## Files Below 80% Threshold
+
+### lib/notifications.ts (45%)
+Uncovered lines: 23-45, 67-89
+Missing tests for:
+- sendNotification()
+- retryFailedNotifications()
+
+### lib/auth.ts (78%)
+Uncovered lines: 112-118
+Missing tests for:
+- refreshToken() error path
+```
+
+## Flag: `--full`
+
+Complete test suite with all checks:
+
+```
+/tdd --full
+
+Agent:
+## Running Full Test Suite
+
+### 1. Unit Tests
+25 passed ✓
+
+### 2. Integration Tests (NO MOCKING enforced)
+ ✓ Policy check passed
+12 passed ✓
+
+### 3. E2E Tests
+8 passed ✓
+
+### 4. Coverage Analysis
+Overall: 87% ✓
+
+### 5. No-Stubs Validation
+ ✓ No lorem ipsum found
+ ✓ No "Coming soon" placeholders
+ ✓ No empty function bodies
+ ✓ No TODO comments in tests
+
+All checks passed ✓
+```
+
+## No-Stubs Validation
+
+Checked with `--full` flag:
+
+| Category | Forbidden Patterns |
+|----------|-------------------|
+| UI | Lorem ipsum, "Coming soon", "TBD", empty pages |
+| Code | `pass` without impl, `// TODO:`, empty functions |
+| Errors | `throw new Error("Not implemented")` |
+| Tests | Skipped tests without reason, placeholder assertions |
+
+**The Rule:** If a feature isn't ready, don't include it at all.
 
 ## Coverage Requirements
 
@@ -299,42 +242,100 @@ Coverage: 100% ✅ (Target: 80%)
   - Security-critical code
   - Core business logic
 
-## Important Notes
+## Quick Commands Reference
 
-**MANDATORY**: Tests must be written BEFORE implementation. The TDD cycle is:
+```bash
+# Unit tests
+npm test
+npm test -- --coverage
+npm test -- --watch
 
-1. **RED** - Write failing test
-2. **GREEN** - Implement to pass
-3. **REFACTOR** - Improve code
+# E2E tests
+npx playwright test
+npx playwright test --headed
+npx playwright test --debug
+npx playwright show-report
 
-Never skip the RED phase. Never write code before tests.
+# Specific file
+npm test -- path/to/file.test.ts
 
-## Integration with Other Commands
-
-- Use `/plan` first to understand what to build
-- Use `/tdd` to implement with tests
-- Use `/build-and-fix` if build errors occur
-- Use `/code-review` to review implementation
-- Use `/test-coverage` to verify coverage
-
-## Related Commands
-
-This command works with:
-- `/verify` - Run verification after TDD implementation
-- `/test-coverage` - Check test coverage
-- `/no-stubs` - Verify no placeholder content
+# Coverage
+npm test -- --coverage --coverageReporters=text
+```
 
 ## Agent Escalation
 
-This command automatically escalates to specialized agents when:
-
 | Condition | Agent | Purpose |
 |-----------|-------|---------|
-| Progress review needed | **intermediate-reviewer** | Milestone validation after TDD cycles |
-| React/Next.js testing | **ui-engineer** | React 19 testing patterns, component tests |
-| Flutter testing | **flutter-specialist** | Flutter widget testing, integration tests |
+| React/Next.js testing | **ui-engineer** | React 19 testing patterns |
+| Flutter testing | **flutter-specialist** | Widget/integration tests |
+| NO MOCKING violations | **gold-standards-validator** | Policy enforcement |
+| Test infrastructure | **deployment-specialist** | Docker test environment |
+| Flaky tests | **intermediate-reviewer** | Diagnose instability |
 
-### Escalation Triggers
-- **intermediate-reviewer**: Use after completing significant TDD cycles to validate progress
-- **ui-engineer**: Use for React/Next.js component testing patterns
-- **flutter-specialist**: Use for Flutter widget and integration testing
+## Related Commands
+
+- `/design` - Plan what to build
+- `/run` - Execute plan with TDD workflow
+- `/verify` - Full verification including tests
+- `/code-review` - Review test quality
+- `/build-fix` - Fix build errors
+
+## Flag: `--from-plan`
+
+Run tests based on the Test Strategy in the current plan:
+
+```
+/tdd --from-plan
+
+Agent:
+Reading Test Strategy from .claude/plans/current.md...
+
+## Test Strategy Loaded
+
+| Phase | Code Type | Tests to Run |
+|-------|-----------|--------------|
+| 1 | API Endpoint | Integration (NO MOCK) |
+| 2 | UI Component | Unit + E2E |
+| 3 | Utility | Unit |
+
+Running tests by code type...
+
+### API Endpoints (Integration)
+  + tests/integration/users.test.ts - 5 passed
+  + tests/integration/auth.test.ts - 3 passed
+NO MOCKING policy: VERIFIED
+
+### UI Components (Unit + E2E)
+  + tests/unit/Button.test.tsx - 8 passed
+  + tests/e2e/user-profile.spec.ts - 2 passed
+
+### Utilities (Unit)
+  + tests/unit/formatters.test.ts - 12 passed
+
+All tests passed
+```
+
+This is useful after `/design` to validate tests exist before running `/run`.
+
+## Workflow
+
+```
+/design "Add feature"  →  Creates plan with TDD recommendation
+/run                   →  Implements with TDD if recommended
+/tdd                   →  Run tests to verify (you are here)
+/tdd coverage          →  Check coverage gaps
+/verify                →  Full verification
+```
+
+## Next Steps Output
+
+**After completing this command, always display the following block at the end of your output:**
+
+```
+---
+Next: /verify - Run full verification (build, types, lint, tests)
+ Or: /tdd coverage - Analyze test coverage gaps
+ Or: /code-review - Review code quality and security
+---
+```

@@ -64,11 +64,11 @@ Modern Minimalist - bryanminear.com style with:
 Should show `everything-claude-code` as installed.
 
 ## Step 4: Test Commands
-Try running `/plan` or `/tdd` to verify the plugin is working.
+Try running `/design` or `/tdd` to verify the plugin is working.
 
 ## Available Slash Commands
 - `/tdd` - Test-driven development workflow
-- `/plan` - Implementation planning
+- `/design` - Implementation planning
 - `/e2e` - E2E test generation
 - `/code-review` - Quality review
 - `/build-fix` - Build error resolution

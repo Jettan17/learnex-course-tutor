@@ -1,3 +1,10 @@
+---
+description: Sequential agent workflow for complex tasks
+ecc_base_version: "5230892"
+last_synced: "2026-01-26"
+customizations: "Agent escalation section added"
+---
+
 # Orchestrate Command
 
 Sequential agent workflow for complex tasks.
@@ -187,3 +194,39 @@ This command automatically escalates to specialized agents when:
 - **gh-manager**: Use when syncing with GitHub Projects, creating issues, managing sprints
 - **ultrathink-analyst**: Use for complex cross-cutting concerns, risk analysis
 - **intermediate-reviewer**: Use after completing significant milestones
+
+## Next Steps Output
+
+**After completing this command, display the following block based on workflow type:**
+
+For `feature` workflow:
+```
+---
+Next: /verify - Run full verification on new feature
+ Or: /deploy - Deploy the feature
+---
+```
+
+For `bugfix` workflow:
+```
+---
+Next: /verify - Run full verification on the fix
+ Or: /checkpoint - Save bugfix state
+---
+```
+
+For `refactor` workflow:
+```
+---
+Next: /tdd - Run tests to confirm refactor correctness
+ Or: /verify - Run full verification
+---
+```
+
+For `security` workflow:
+```
+---
+Next: /code-review - Security-focused quality review
+ Or: /checkpoint - Save security fix state
+---
+```
