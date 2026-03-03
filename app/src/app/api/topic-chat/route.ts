@@ -1,6 +1,5 @@
-import { streamText } from 'ai'
+import { streamText, convertToModelMessages, UIMessage } from 'ai'
 import { chatModel } from '@/lib/ai'
-import { ChatMessage } from '@/types/ai'
 
 interface TopicContext {
   name: string
@@ -10,7 +9,7 @@ interface TopicContext {
 }
 
 interface RequestBody {
-  messages: ChatMessage[]
+  messages: UIMessage[]
   topicContext: TopicContext
 }
 
@@ -44,8 +43,8 @@ Instructions:
   const result = streamText({
     model: chatModel,
     system: systemPrompt,
-    messages,
+    messages: await convertToModelMessages(messages),
   })
 
-  return result.toDataStreamResponse()
+  return result.toUIMessageStreamResponse()
 }

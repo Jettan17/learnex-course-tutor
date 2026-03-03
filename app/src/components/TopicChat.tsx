@@ -1,23 +1,24 @@
 'use client'
 
 import { useChat } from '@ai-sdk/react'
-import { useRef, useEffect } from 'react'
+import { DefaultChatTransport } from 'ai'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { Topic } from '@/types'
 
 interface Props {
   topic: Topic
 }
 
-function MessageContent({ content }: { content: string }) {
+function MessageContent({ text }: { text: string }) {
   // Render fenced code blocks, then inline code, then plain text
   const fencePattern = /```[\w]*\n([\s\S]*?)```/g
   const parts: React.ReactNode[] = []
   let lastIndex = 0
   let match: RegExpExecArray | null
 
-  while ((match = fencePattern.exec(content)) !== null) {
+  while ((match = fencePattern.exec(text)) !== null) {
     if (match.index > lastIndex) {
-      parts.push(<InlineText key={lastIndex} text={content.slice(lastIndex, match.index)} />)
+      parts.push(<InlineText key={lastIndex} text={text.slice(lastIndex, match.index)} />)
     }
     parts.push(
       <pre key={match.index} className="mt-2 mb-2 text-xs overflow-x-auto bg-neutral-900 text-neutral-100 p-3 rounded-lg">
@@ -26,8 +27,8 @@ function MessageContent({ content }: { content: string }) {
     )
     lastIndex = match.index + match[0].length
   }
-  if (lastIndex < content.length) {
-    parts.push(<InlineText key={lastIndex} text={content.slice(lastIndex)} />)
+  if (lastIndex < text.length) {
+    parts.push(<InlineText key={lastIndex} text={text.slice(lastIndex)} />)
   }
   return <>{parts}</>
 }
@@ -50,18 +51,18 @@ function InlineText({ text }: { text: string }) {
 }
 
 export default function TopicChat({ topic }: Props) {
+  const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const topicContext = {
+  const topicContext = useMemo(() => ({
     name: topic.name,
     summary: topic.summary,
     keyPoints: topic.keyPoints,
     codeExamples: topic.codeExamples,
-  }
+  }), [topic])
 
-  const { messages, input, handleInputChange, handleSubmit, status, setMessages, append } = useChat({
-    api: '/api/topic-chat',
-    body: { topicContext },
+  const { messages, sendMessage, status, setMessages } = useChat({
+    transport: new DefaultChatTransport({ api: '/api/topic-chat' }),
   })
 
   const isStreaming = status === 'streaming' || status === 'submitted'
@@ -76,6 +77,12 @@ export default function TopicChat({ topic }: Props) {
     `Give me a typical exam question about ${topic.name}`,
     `What's a common mistake students make with ${topic.name}?`,
   ]
+
+  const handleSend = (text: string) => {
+    if (!text.trim() || isStreaming) return
+    sendMessage({ text }, { body: { topicContext } })
+    setInput('')
+  }
 
   return (
     <div className="glass-card rounded-2xl overflow-hidden">
@@ -110,7 +117,7 @@ export default function TopicChat({ topic }: Props) {
             {starterQuestions.map((q, i) => (
               <button
                 key={i}
-                onClick={() => append({ role: 'user', content: q })}
+                onClick={() => handleSend(q)}
                 className="w-full text-left text-sm glass-card rounded-xl px-4 py-2.5 hover:border-foreground transition-colors"
               >
                 {q}
@@ -119,19 +126,26 @@ export default function TopicChat({ topic }: Props) {
           </div>
         ) : (
           <>
-            {messages.map((m) => (
-              <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div
-                  className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
-                    m.role === 'user'
-                      ? 'bg-foreground text-background rounded-br-sm'
-                      : 'glass-card rounded-bl-sm'
-                  }`}
-                >
-                  <MessageContent content={m.content} />
+            {messages.map((m) => {
+              const textContent = m.parts
+                .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
+                .map(p => p.text)
+                .join('')
+
+              return (
+                <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div
+                    className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
+                      m.role === 'user'
+                        ? 'bg-foreground text-background rounded-br-sm'
+                        : 'glass-card rounded-bl-sm'
+                    }`}
+                  >
+                    <MessageContent text={textContent} />
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
             {isStreaming && messages[messages.length - 1]?.role === 'user' && (
               <div className="flex justify-start">
                 <div className="glass-card rounded-2xl rounded-bl-sm px-4 py-2.5">
@@ -150,12 +164,12 @@ export default function TopicChat({ topic }: Props) {
 
       {/* Input */}
       <form
-        onSubmit={handleSubmit}
+        onSubmit={(e) => { e.preventDefault(); handleSend(input) }}
         className="px-5 py-4 border-t border-neutral-200 dark:border-neutral-800 flex gap-3"
       >
         <input
           value={input}
-          onChange={handleInputChange}
+          onChange={(e) => setInput(e.target.value)}
           placeholder="Ask a question about this topic..."
           disabled={isStreaming}
           className="flex-1 text-sm bg-transparent border border-neutral-300 dark:border-neutral-700 rounded-lg px-3 py-2 outline-none focus:border-foreground transition-colors placeholder:text-neutral-400 disabled:opacity-50"
