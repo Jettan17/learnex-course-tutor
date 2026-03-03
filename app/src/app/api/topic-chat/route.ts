@@ -40,11 +40,18 @@ Instructions:
 - If asked for a code example, use the language appropriate to the topic
 - If a question is outside the scope of this topic, say so and redirect to what is covered`
 
-  const result = streamText({
-    model: chatModel,
-    system: systemPrompt,
-    messages: await convertToModelMessages(messages),
-  })
-
-  return result.toUIMessageStreamResponse()
+  try {
+    const result = streamText({
+      model: chatModel,
+      system: systemPrompt,
+      messages: await convertToModelMessages(messages),
+    })
+    return result.toUIMessageStreamResponse()
+  } catch (err) {
+    const status = err instanceof Error && err.message.includes('429') ? 429 : 500
+    const message = status === 429
+      ? 'Rate limit reached. Wait a moment and try again.'
+      : 'AI service error. Please try again.'
+    return Response.json({ error: message }, { status })
+  }
 }

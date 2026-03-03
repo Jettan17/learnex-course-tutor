@@ -61,11 +61,17 @@ export default function TopicChat({ topic }: Props) {
     codeExamples: topic.codeExamples,
   }), [topic])
 
-  const { messages, sendMessage, status, setMessages } = useChat({
+  const { messages, sendMessage, status, setMessages, error } = useChat({
     transport: new DefaultChatTransport({ api: '/api/topic-chat' }),
   })
 
   const isStreaming = status === 'streaming' || status === 'submitted'
+
+  const errorMessage = error
+    ? error.message?.toLowerCase().includes('429') || error.message?.toLowerCase().includes('rate')
+      ? 'Rate limit reached — wait a minute and try again.'
+      : 'Something went wrong. Please try again.'
+    : null
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -154,6 +160,13 @@ export default function TopicChat({ topic }: Props) {
                     <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 animate-bounce" style={{ animationDelay: '150ms' }} />
                     <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 animate-bounce" style={{ animationDelay: '300ms' }} />
                   </span>
+                </div>
+              </div>
+            )}
+            {errorMessage && (
+              <div className="flex justify-start">
+                <div className="max-w-[85%] rounded-2xl rounded-bl-sm px-4 py-2.5 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                  {errorMessage}
                 </div>
               </div>
             )}

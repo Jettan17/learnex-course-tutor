@@ -30,10 +30,13 @@ export default function QuestionHint({ question, topicSummary, onHintUsed }: Pro
       })
       setHintLevel(level)
       if (level === 1) onHintUsed()
-    } catch {
+    } catch (err) {
+      const msg = err instanceof Error && (err.message.includes('429') || err.message.toLowerCase().includes('rate'))
+        ? 'Rate limit reached — wait a moment and try again.'
+        : 'Could not load hint. Check your connection and try again.'
       setHints((prev) => {
         const next = [...prev]
-        next[level - 1] = 'Could not load hint. Check your connection and try again.'
+        next[level - 1] = msg
         return next
       })
       setHintLevel(level)

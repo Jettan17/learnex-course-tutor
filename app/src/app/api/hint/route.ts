@@ -34,10 +34,17 @@ Rules:
 
 Hint:`
 
-  const { text } = await generateText({
-    model: hintModel,
-    prompt,
-  })
-
-  return Response.json({ hint: text.trim(), level: hintLevel })
+  try {
+    const { text } = await generateText({
+      model: hintModel,
+      prompt,
+    })
+    return Response.json({ hint: text.trim(), level: hintLevel })
+  } catch (err) {
+    const status = err instanceof Error && err.message.includes('429') ? 429 : 500
+    const message = status === 429
+      ? 'Rate limit reached — wait a moment and try again.'
+      : 'Could not load hint. Please try again.'
+    return Response.json({ error: message }, { status })
+  }
 }
