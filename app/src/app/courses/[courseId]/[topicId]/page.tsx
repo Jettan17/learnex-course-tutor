@@ -3,6 +3,14 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getTopic, getCourse } from "@/data/courses";
+import TopicChat from "@/components/TopicChat";
+
+const courseColors: Record<string, { gradient: string; bg: string; text: string }> = {
+  sc1006: { gradient: "from-amber-500 to-orange-500", bg: "bg-amber-50 dark:bg-amber-900/20", text: "text-amber-700 dark:text-amber-300" },
+  sc1007: { gradient: "from-indigo-500 to-purple-500", bg: "bg-indigo-50 dark:bg-indigo-900/20", text: "text-indigo-700 dark:text-indigo-300" },
+  sc1008: { gradient: "from-emerald-500 to-teal-500", bg: "bg-emerald-50 dark:bg-emerald-900/20", text: "text-emerald-700 dark:text-emerald-300" },
+  sc2002: { gradient: "from-pink-500 to-rose-500", bg: "bg-pink-50 dark:bg-pink-900/20", text: "text-pink-700 dark:text-pink-300" },
+};
 
 export default function TopicPage() {
   const params = useParams();
@@ -11,6 +19,7 @@ export default function TopicPage() {
 
   const course = getCourse(courseId);
   const topic = getTopic(courseId, topicId);
+  const colors = courseColors[courseId] || courseColors.sc1007;
 
   if (!course || !topic) {
     return (
@@ -29,46 +38,54 @@ export default function TopicPage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Breadcrumb */}
       <nav className="mb-6">
-        <ol className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
+        <ol className="flex items-center space-x-2 text-sm text-neutral-500">
           <li>
-            <Link href="/courses" className="hover:text-indigo-600">
+            <Link href="/courses" className="hover:text-foreground transition-colors">
               Courses
             </Link>
           </li>
           <li>/</li>
           <li>
-            <Link href={`/courses/${courseId}`} className="hover:text-indigo-600">
+            <Link href={`/courses/${courseId}`} className="hover:text-foreground transition-colors">
               {course.code}
             </Link>
           </li>
           <li>/</li>
-          <li className="text-gray-900 dark:text-white font-medium">
-            {topic.name}
-          </li>
+          <li className="text-foreground font-medium">{topic.name}</li>
         </ol>
       </nav>
 
       {/* Topic Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-          {topic.name}
-        </h1>
-        <Link
-          href={`/courses/${courseId}/${topicId}/quiz`}
-          className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium"
-        >
-          Take Quiz →
-        </Link>
+      <div className="glass-card rounded-2xl p-6 mb-8">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <span className={`inline-block ${colors.bg} ${colors.text} text-xs font-semibold px-2.5 py-0.5 rounded-lg mb-3 uppercase tracking-wider`}>
+              {course.code}
+            </span>
+            <h1 className="text-3xl font-bold mb-4">{topic.name}</h1>
+            <Link
+              href={`/courses/${courseId}/${topicId}/quiz`}
+              className="btn-primary inline-flex items-center gap-2"
+            >
+              Take Quiz
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+          </div>
+          <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colors.gradient} flex-shrink-0`} />
+        </div>
       </div>
 
-      {/* Summary Content */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+      {/* Summary */}
+      <div className="glass-card rounded-2xl p-6 mb-6">
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <span className={`w-1 h-5 rounded-full bg-gradient-to-b ${colors.gradient}`} />
           Summary
         </h2>
-        <div className="prose dark:prose-invert max-w-none">
+        <div className="space-y-3">
           {topic.summary.split("\n\n").map((paragraph, i) => (
-            <p key={i} className="text-gray-600 dark:text-gray-300 mb-4 whitespace-pre-wrap">
+            <p key={i} className="text-sm text-neutral-600 dark:text-neutral-300 whitespace-pre-wrap leading-relaxed">
               {paragraph}
             </p>
           ))}
@@ -76,15 +93,18 @@ export default function TopicPage() {
       </div>
 
       {/* Key Points */}
-      <div className="bg-indigo-100 dark:bg-indigo-900/40 rounded-lg p-6 mb-8">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+      <div className="glass-card rounded-2xl p-6 mb-6">
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <span className={`w-1 h-5 rounded-full bg-gradient-to-b ${colors.gradient}`} />
           Key Points
         </h2>
         <ul className="space-y-2">
           {topic.keyPoints.map((point, i) => (
-            <li key={i} className="flex items-start">
-              <span className="text-indigo-600 dark:text-indigo-400 mr-2">•</span>
-              <span className="text-gray-700 dark:text-gray-200">{point}</span>
+            <li key={i} className="flex items-start gap-3 text-sm">
+              <span className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-gradient-to-br ${colors.gradient} flex items-center justify-center text-white text-xs font-bold`}>
+                {i + 1}
+              </span>
+              <span className="text-neutral-700 dark:text-neutral-200 leading-relaxed">{point}</span>
             </li>
           ))}
         </ul>
@@ -92,70 +112,61 @@ export default function TopicPage() {
 
       {/* Code Examples */}
       {topic.codeExamples && topic.codeExamples.length > 0 && (
-        <div className="space-y-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <span className={`w-1 h-5 rounded-full bg-gradient-to-b ${colors.gradient}`} />
             Code Examples
           </h2>
-          {topic.codeExamples.map((example, i) => (
-            <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-              <div className="bg-gray-100 dark:bg-gray-700 px-4 py-2 border-b border-gray-200 dark:border-gray-600">
-                <h3 className="font-medium text-gray-900 dark:text-white">
-                  {example.title}
-                </h3>
+          <div className="space-y-4">
+            {topic.codeExamples.map((example, i) => (
+              <div key={i} className="glass-card rounded-2xl overflow-hidden">
+                <div className="px-5 py-3 border-b border-neutral-200 dark:border-neutral-800">
+                  <h3 className="text-sm font-semibold">{example.title}</h3>
+                </div>
+                <pre className="p-5 overflow-x-auto bg-neutral-950 text-neutral-100">
+                  <code className="text-xs font-mono leading-relaxed">{example.code}</code>
+                </pre>
+                <div className="px-5 py-3 border-t border-neutral-200 dark:border-neutral-800">
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{example.explanation}</p>
+                </div>
               </div>
-              <pre className="p-4 overflow-x-auto bg-gray-900 text-gray-100">
-                <code className="text-sm font-mono">{example.code}</code>
-              </pre>
-              <div className="p-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {example.explanation}
-                </p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 
       {/* Supplementary Resources */}
       {topic.resources && topic.resources.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Supplementary Resources
+        <div className="glass-card rounded-2xl p-6 mb-6">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <span className={`w-1 h-5 rounded-full bg-gradient-to-b ${colors.gradient}`} />
+            Resources
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {topic.resources.map((resource, i) => (
               <a
                 key={i}
                 href={resource.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-start p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                className="flex items-start p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-foreground transition-colors"
               >
-                <div className="flex-shrink-0 mr-3">
-                  <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium ${
-                    resource.type === 'tutorial'
-                      ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                      : resource.type === 'documentation'
-                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                      : resource.type === 'reference'
-                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
-                      : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
-                  }`}>
-                    {resource.type === 'tutorial' && '📚'}
-                    {resource.type === 'documentation' && '📖'}
-                    {resource.type === 'reference' && '📋'}
-                    {resource.type === 'practice' && '💻'}
-                  </span>
-                </div>
+                <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg text-xs font-medium mr-3 flex-shrink-0 ${
+                  resource.type === 'tutorial' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                  : resource.type === 'documentation' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                  : resource.type === 'reference' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
+                  : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
+                }`}>
+                  {resource.type === 'tutorial' && '📚'}
+                  {resource.type === 'documentation' && '📖'}
+                  {resource.type === 'reference' && '📋'}
+                  {resource.type === 'practice' && '💻'}
+                </span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                    {resource.title}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {resource.source}
-                  </p>
+                  <p className="text-sm font-medium truncate">{resource.title}</p>
+                  <p className="text-xs text-neutral-500">{resource.source}</p>
                 </div>
-                <svg className="w-4 h-4 text-gray-400 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-neutral-400 flex-shrink-0 ml-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
               </a>
@@ -164,19 +175,31 @@ export default function TopicPage() {
         </div>
       )}
 
+      {/* AI Chat */}
+      <div className="mb-8">
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <span className={`w-1 h-5 rounded-full bg-gradient-to-b ${colors.gradient}`} />
+          Study Chat
+        </h2>
+        <TopicChat topic={topic} />
+      </div>
+
       {/* Navigation */}
-      <div className="mt-8 flex justify-between">
-        <Link
-          href={`/courses/${courseId}`}
-          className="text-gray-600 dark:text-gray-300 hover:text-indigo-600"
-        >
-          ← Back to Course
+      <div className="flex justify-between items-center">
+        <Link href={`/courses/${courseId}`} className="btn-secondary inline-flex items-center gap-2">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+          </svg>
+          Back to Course
         </Link>
         <Link
           href={`/courses/${courseId}/${topicId}/quiz`}
-          className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium"
+          className="btn-primary inline-flex items-center gap-2"
         >
-          Take Quiz →
+          Take Quiz
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
         </Link>
       </div>
     </div>
