@@ -989,7 +989,9 @@ Disadvantages:
           'Tail pointer (optional) tracks the last node for O(1) append',
           'Insert/delete at front: O(1)',
           'Insert/delete at end: O(n) for singly, O(1) for doubly with tail',
-          'Search: O(n)'
+          'Search: O(n)',
+          'Circular linked list: last node points back to head — traversal without a visited check causes infinite loop',
+          "Floyd's cycle detection: two pointers (slow +1, fast +2) meet inside cycle if one exists; time O(n), space O(1)"
         ],
         codeExamples: [
           {
@@ -3019,7 +3021,8 @@ When recursive call is the last operation, compiler can optimize.`,
           'Each recursive call uses stack memory',
           'Recursion can be converted to iteration (and vice versa)',
           'Think of recursion as solving a smaller version of the same problem',
-          'Common recursive patterns: factorial, Fibonacci, tree traversal'
+          'Common recursive patterns: factorial, Fibonacci, tree traversal',
+          'Tail recursion: recursive call is the last operation — compiler can eliminate the stack frame (tail call optimisation), converting to O(1) space'
         ],
         codeExamples: [
           {
@@ -3621,7 +3624,8 @@ Protected Access:
           'super() calls parent constructor (must be first line)',
           'Method overriding: child provides different implementation',
           '@Override annotation for clarity and compile-time check',
-          'Java does not support multiple inheritance with classes'
+          'Java does not support multiple inheritance with classes',
+          'Diamond problem: ambiguity when class inherits same method from two parents — Java solves this by forbidding multiple class inheritance (interfaces used instead)'
         ],
         codeExamples: [
           {
@@ -3755,7 +3759,8 @@ Benefits:
           'Parent reference can hold child object (upcasting)',
           'Runtime polymorphism calls method based on actual object type',
           'Use instanceof before downcasting',
-          'Enables writing flexible, extensible code'
+          'Enables writing flexible, extensible code',
+          'vtable (virtual method table): JVM uses a per-class table of method pointers to resolve which overridden method to call at runtime — this is how dynamic dispatch works under the hood'
         ],
         codeExamples: [
           {
