@@ -94,6 +94,9 @@ export default function TopicChat({ topic }: Props) {
     if (!text.trim() || isStreaming) return
     sendMessage({ text }, { body: { topicContext } })
     setInput('')
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+    }
   }
 
   return (
