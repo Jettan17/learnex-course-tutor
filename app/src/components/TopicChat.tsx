@@ -74,7 +74,9 @@ export default function TopicChat({ topic }: Props) {
     : null
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
   }, [messages])
 
   const starterQuestions = [
