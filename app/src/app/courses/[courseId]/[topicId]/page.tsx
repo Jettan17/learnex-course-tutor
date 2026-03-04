@@ -135,46 +135,6 @@ export default function TopicPage() {
         </div>
       )}
 
-      {/* Supplementary Resources */}
-      {topic.resources && topic.resources.length > 0 && (
-        <div className="glass-card rounded-2xl p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <span className={`w-1 h-5 rounded-full bg-gradient-to-b ${colors.gradient}`} />
-            Resources
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {topic.resources.map((resource, i) => (
-              <a
-                key={i}
-                href={resource.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-start p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-foreground transition-colors"
-              >
-                <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg text-xs font-medium mr-3 flex-shrink-0 ${
-                  resource.type === 'tutorial' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                  : resource.type === 'documentation' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                  : resource.type === 'reference' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
-                  : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
-                }`}>
-                  {resource.type === 'tutorial' && '📚'}
-                  {resource.type === 'documentation' && '📖'}
-                  {resource.type === 'reference' && '📋'}
-                  {resource.type === 'practice' && '💻'}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{resource.title}</p>
-                  <p className="text-xs text-neutral-500">{resource.source}</p>
-                </div>
-                <svg className="w-4 h-4 text-neutral-400 flex-shrink-0 ml-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* AI Chat */}
       <div className="mb-8">
         <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
