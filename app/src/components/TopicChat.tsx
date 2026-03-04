@@ -53,6 +53,7 @@ function InlineText({ text }: { text: string }) {
 export default function TopicChat({ topic }: Props) {
   const [input, setInput] = useState('')
   const containerRef = useRef<HTMLDivElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
 
   const topicContext = useMemo(() => ({
     name: topic.name,
@@ -76,6 +77,9 @@ export default function TopicChat({ topic }: Props) {
   useEffect(() => {
     if (messages.at(-1)?.role === 'assistant') {
       containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      if (messagesContainerRef.current) {
+        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+      }
     }
   }, [messages])
 
@@ -118,7 +122,7 @@ export default function TopicChat({ topic }: Props) {
       </div>
 
       {/* Messages / Starters */}
-      <div className="h-80 overflow-y-auto px-5 py-4 space-y-3">
+      <div ref={messagesContainerRef} className="h-80 overflow-y-auto px-5 py-4 space-y-3">
         {messages.length === 0 ? (
           <div className="space-y-2">
             <p className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Suggested questions</p>
