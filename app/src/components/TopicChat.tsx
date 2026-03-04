@@ -75,13 +75,15 @@ export default function TopicChat({ topic }: Props) {
     : null
 
   useEffect(() => {
+    // Always scroll div to bottom — covers new messages and typing bubble
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+    }
+    // Only center page when AI has replied
     if (messages.at(-1)?.role === 'assistant') {
       containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      if (messagesContainerRef.current) {
-        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
-      }
     }
-  }, [messages])
+  }, [messages, isStreaming])
 
   const starterQuestions = [
     `Explain ${topic.name} in simple terms`,
@@ -94,9 +96,6 @@ export default function TopicChat({ topic }: Props) {
     if (!text.trim() || isStreaming) return
     sendMessage({ text }, { body: { topicContext } })
     setInput('')
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
-    }
   }
 
   return (
